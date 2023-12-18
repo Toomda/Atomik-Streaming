@@ -11,6 +11,7 @@ import { getSelf } from "@/lib/auth-service";
 import { signOut } from "@/next-auth";
 import { LogOut } from "lucide-react";
 import { SettingsModal } from "./settings-modal";
+import { DeleteModal } from "./delete-modal";
 
 export const UserButton = async ({ props }: any) => {
   const user = await getSelf();
@@ -40,6 +41,8 @@ export const UserButton = async ({ props }: any) => {
             Logout
           </Button>
         </form>
+        <DropdownMenuSeparator />
+        <DeleteModal userId={user.id} />
       </DropdownMenuContent>
     </DropdownMenu>
   );

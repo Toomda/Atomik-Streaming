@@ -4,13 +4,19 @@ import { UserButton } from "@/components/auth/user-button";
 import { currentUser } from "@/lib/auth";
 import { Clapperboard } from "lucide-react";
 import Link from "next/link";
+import { SignUpButton } from "@/components/auth/signup-button";
 
 export const Actions = async () => {
   const user = await currentUser();
 
   return (
     <div className="flex items-center justify-end gap-x-2 ml-4 lg:ml-0">
-      {!user && <SignInButton />}
+      {!user && (
+        <div>
+          <SignInButton />
+          <SignUpButton />
+        </div>
+      )}
       {!!user && (
         <div className="flex items-center gap-x-4">
           <Button

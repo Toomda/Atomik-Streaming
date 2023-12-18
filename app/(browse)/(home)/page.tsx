@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Results, ResultsSkeleton } from "./_components/results";
 import { Suspense } from "react";
 

@@ -17,10 +17,10 @@ import { updateUser } from "@/actions/user";
 import { toast } from "sonner";
 import { Settings, Trash } from "lucide-react";
 import { UploadDropzone } from "@/lib/uploadthing";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface SettingsModalProps {
-  initialUsername: string | null;
+  initialUsername: string;
   initialImage: string | null;
 }
 
@@ -33,13 +33,17 @@ export const SettingsModal = ({
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const closeRef = useRef<ElementRef<"button">>(null);
+  const pathname = usePathname();
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     startTransition(() => {
       updateUser({ username: username })
         .then(() => {
-          toast.success("Username successfully");
+          if (pathname.includes(initialUsername)) {
+            router.push(pathname.replace(initialUsername, username));
+          }
+          toast.success("Username successfully updated");
           closeRef?.current?.click();
         })
         .catch(() => toast.error("Something went wrong"));

@@ -1,16 +1,18 @@
 "use client";
 
 import qs from "query-string";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SearchIcon, X } from "lucide-react";
 import { redirect, useRouter } from "next/navigation";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
 
 export const Search = () => {
   const router = useRouter();
   const [value, setValue] = useState("");
+  const user = useSession();
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,6 +36,10 @@ export const Search = () => {
   const onClear = () => {
     setValue("");
     router.push("/");
+  };
+
+  const onClick = () => {
+    console.log(user);
   };
 
   return (
@@ -61,6 +67,7 @@ export const Search = () => {
       >
         <SearchIcon className="h-5 w-5 text-muted-foreground" />
       </Button>
+      <Button onClick={onClick}>Button</Button>
     </form>
   );
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser } from "@/lib/auth";
+import { currentUser, useAuth, useUser } from "@/lib/auth";
 import { usePathname } from "next/navigation";
 import { Fullscreen, KeyRound, MessageSquare, Users } from "lucide-react";
 import { NavItem, NavItemSkeleton } from "./navitem";
