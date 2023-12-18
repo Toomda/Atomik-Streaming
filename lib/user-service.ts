@@ -6,10 +6,9 @@ export const getUserByUsername = async (username: string) => {
       where: { username },
       select: {
         id: true,
-        externalUserId: true,
         username: true,
         bio: true,
-        imageUrl: true,
+        image: true,
         stream: {
           select: {
             id: true,

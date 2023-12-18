@@ -27,9 +27,9 @@ export const Following = ({ data }: FollowingProps) => {
       <ul className="space-y-2 px-2">
         {data.map((follow) => (
           <UserItem
-            username={follow.following.username}
+            username={follow.following.username!}
             key={follow.following.id}
-            imageUrl={follow.following.imageUrl}
+            imageUrl={follow.following.image!}
             isLive={follow.following.stream?.isLive}
           />
         ))}

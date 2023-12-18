@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "@/lib/auth";
 import { Heart } from "lucide-react";
 import { onFollow, onUnfollow } from "@/actions/follow";
 import { useRouter } from "next/navigation";
@@ -22,7 +22,7 @@ export const Actions = ({
   isHost,
 }: ActionsProps) => {
   const [isPending, startTransition] = useTransition();
-  const { userId } = useAuth();
+  const user = useAuth();
   const router = useRouter();
 
   const handleFollow = () => {
@@ -48,8 +48,8 @@ export const Actions = ({
   };
 
   const toggleFollow = () => {
-    if (!userId) {
-      return router.push("/sign-in");
+    if (!user) {
+      return router.push("/login");
     }
 
     if (isHost) return;

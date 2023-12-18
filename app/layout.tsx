@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
+import { SessionProvider } from "next-auth/react";
+import { auth } from "@/next-auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,15 +13,17 @@ export const metadata: Metadata = {
   description: "Let's Play",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+
   return (
-    <ClerkProvider appearance={{ baseTheme: dark }}>
-      <html lang="en">
-        <body className={inter.className}>
+    <html lang="en">
+      <body className={inter.className}>
+        <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"
             forcedTheme="dark"
@@ -30,8 +32,8 @@ export default function RootLayout({
             <Toaster theme="light" position="bottom-center" />
             {children}
           </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </SessionProvider>
+      </body>
+    </html>
   );
 }

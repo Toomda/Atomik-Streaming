@@ -3,7 +3,7 @@
 import qs from "query-string";
 import { useState } from "react";
 import { SearchIcon, X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,10 @@ export const Search = () => {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!value) return;
+    if (!value) {
+      router.push("/");
+      return;
+    }
 
     const url = qs.stringifyUrl(
       {
@@ -30,6 +33,7 @@ export const Search = () => {
 
   const onClear = () => {
     setValue("");
+    router.push("/");
   };
 
   return (
