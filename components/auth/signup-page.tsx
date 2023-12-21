@@ -9,12 +9,13 @@ import { registerUser } from "@/actions/user";
 export const SignUp = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [isPending, startTransition] = useTransition();
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     startTransition(async () => {
-      await registerUser(username, password);
+      await registerUser(username, password, email);
       await signIn("credentials", {
         username: username,
         password: password,
@@ -30,6 +31,14 @@ export const SignUp = () => {
           <Input
             className="mb-4"
             onChange={(e) => setUsername(e.target.value)}
+            disabled={isPending}
+          />
+        </div>
+        <div>
+          <p className="text-muted-foreground justify-start p-1">Email</p>
+          <Input
+            className="mb-4"
+            onChange={(e) => setEmail(e.target.value)}
             disabled={isPending}
           />
         </div>

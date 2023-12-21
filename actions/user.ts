@@ -34,13 +34,22 @@ export const updateUser = async (values: Partial<User>) => {
   return user;
 };
 
-export const registerUser = async (username: string, password: string) => {
+export const registerUser = async (
+  username: string,
+  password: string,
+  email: string
+) => {
+  if (!email || !username || !password) {
+    throw new Error("You need an email, username and password");
+  }
+
   const hashPassword = await bcrypt.hash(password, 10);
 
   const user = await db.user.create({
     data: {
       username: username,
       password: hashPassword,
+      email: email,
       stream: {
         create: {
           name: `${username}'s Stream`,
