@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useTransition, useRef, ElementRef } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useTransition, useRef, ElementRef } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -11,41 +11,41 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { updateStream } from "@/actions/stream";
-import { toast } from "sonner";
-import { UploadDropzone } from "@/lib/uploadthing";
-import { Hint } from "@/components/hint";
-import { Trash } from "lucide-react";
-import Image from "next/image";
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { updateStream } from '@/actions/stream';
+import { toast } from 'sonner';
+import { UploadDropzone } from '@/lib/uploadthing';
+import { Hint } from '@/components/hint';
+import { Trash } from 'lucide-react';
+import Image from 'next/image';
 
 interface InfoModalProps {
   initialName: string;
-  initialThumbnailUrl: string | null;
+  initialThumbnail: string | null;
 }
 
 export const InfoModal = ({
   initialName,
-  initialThumbnailUrl,
+  initialThumbnail,
 }: InfoModalProps) => {
   const [name, setName] = useState(initialName);
-  const [thumbnailUrl, setThumbnailUrl] = useState(initialThumbnailUrl);
+  const [thumbnail, setThumbnail] = useState(initialThumbnail);
 
   const [isPending, startTransition] = useTransition();
-  const closeRef = useRef<ElementRef<"button">>(null);
+  const closeRef = useRef<ElementRef<'button'>>(null);
   const router = useRouter();
 
   const onRemoveThumbnail = () => {
     startTransition(() => {
-      updateStream({ thumbnailUrl: null })
+      updateStream({ thumbnail: null })
         .then(() => {
-          toast.success("Thumbnail removed");
-          setThumbnailUrl("");
+          toast.success('Thumbnail removed');
+          setThumbnail('');
         })
-        .catch(() => toast.error("Something went wrong"));
+        .catch(() => toast.error('Something went wrong'));
     });
   };
 
@@ -54,10 +54,10 @@ export const InfoModal = ({
     startTransition(() => {
       updateStream({ name: name })
         .then(() => {
-          toast.success("Stream updated successfully");
+          toast.success('Stream updated successfully');
           closeRef?.current?.click();
         })
-        .catch(() => toast.error("Something went wrong"));
+        .catch(() => toast.error('Something went wrong'));
     });
   };
 
@@ -88,7 +88,7 @@ export const InfoModal = ({
           </div>
           <div className="space-y-2">
             <Label>Thumbnail</Label>
-            {thumbnailUrl ? (
+            {thumbnail ? (
               <div className="relative aspect-video rounded-xl overflow-hidden border border-white/10">
                 <div className="absolute top-2 right-2 z-[10]">
                   <Hint label="Remove thumbnail" asChild side="left">
@@ -103,7 +103,7 @@ export const InfoModal = ({
                   </Hint>
                 </div>
                 <Image
-                  src={thumbnailUrl}
+                  src={thumbnail}
                   alt="Thumbnail"
                   fill
                   className="object-cover"
@@ -114,13 +114,13 @@ export const InfoModal = ({
                 <UploadDropzone
                   endpoint="thumbnailUploader"
                   appearance={{
-                    label: { color: "#FFFFFF" },
+                    label: { color: '#FFFFFF' },
                     allowedContent: {
-                      color: "#FFFFFF",
+                      color: '#FFFFFF',
                     },
                   }}
                   onClientUploadComplete={(res) => {
-                    setThumbnailUrl(res?.[0]?.url);
+                    setThumbnail(res?.[0]?.url);
                     router.refresh();
                   }}
                 />

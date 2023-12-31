@@ -1,47 +1,40 @@
-"use server";
+'use server';
 
-import { revalidatePath } from "next/cache";
-import { Stream } from "@prisma/client";
+import { revalidatePath } from 'next/cache';
+import { Stream } from '@prisma/client';
 
-import { db } from "@/lib/db";
-import { getSelf } from "@/lib/auth-service";
+import { getSelf } from '@/lib/auth-service';
+import axios from 'axios';
 
 export const updateStream = async (values: Partial<Stream>) => {
-  try {
-    const self = await getSelf();
-    const selfStream = await db.stream.findUnique({
-      where: {
-        userId: self.id,
+  const self = await getSelf();
+
+  let response;
+  response = await axios
+    .post(
+      `http://localhost:5000/api/livestreams/${self.id}`,
+      {
+        thumbnail: values.thumbnail,
+        name: values.name,
+        isChatDelayed: values.isChatDelayed,
+        isChatEnabled: values.isChatEnabled,
+        isChatFollowersOnly: values.isChatFollowersOnly,
       },
+      {
+        headers: {
+          Authorization: `Bearer ${self.token}`,
+        },
+      }
+    )
+    .catch((err) => {
+      console.log(err.response.status);
+      console.log(err.response.statusText);
+      throw new Error(err.response.statusText);
     });
 
-    if (!selfStream) {
-      throw new Error("Stream not found!");
-    }
+  revalidatePath(`/u/${self.username}/chat`);
+  revalidatePath(`/u/${self.username}`);
+  revalidatePath(`/${self.username}`);
 
-    const validData = {
-      thumbnailUrl: values.thumbnailUrl,
-      name: values.name,
-      isChatEnabled: values.isChatEnabled,
-      isChatFollowersOnly: values.isChatFollowersOnly,
-      isChatDelayed: values.isChatDelayed,
-    };
-
-    const stream = await db.stream.update({
-      where: {
-        id: selfStream.id,
-      },
-      data: {
-        ...validData,
-      },
-    });
-
-    revalidatePath(`/u/${self.username}/chat`);
-    revalidatePath(`/u/${self.username}`);
-    revalidatePath(`/${self.username}`);
-
-    return stream;
-  } catch (error) {
-    throw new Error("Internal Error");
-  }
+  return response.data.stream;
 };

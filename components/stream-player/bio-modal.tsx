@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Dialog,
@@ -7,32 +7,35 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Hint } from "@/components/hint";
-import { Textarea } from "@/components/ui/textarea";
-import { useState, useTransition, useRef, ElementRef } from "react";
-import { updateUser } from "@/actions/user";
-import { toast } from "sonner";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Hint } from '@/components/hint';
+import { Textarea } from '@/components/ui/textarea';
+import { useState, useTransition, useRef, ElementRef } from 'react';
+import { updateUser } from '../../lib/user-service';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface BioModalProps {
   initialValue: string | null;
 }
 
 export const BioModal = ({ initialValue }: BioModalProps) => {
-  const [value, setValue] = useState(initialValue || "");
+  const [value, setValue] = useState(initialValue || '');
   const [isPending, startTransition] = useTransition();
-  const closeRef = useRef<ElementRef<"button">>(null);
+  const closeRef = useRef<ElementRef<'button'>>(null);
+  const router = useRouter();
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     startTransition(() => {
       updateUser({ bio: value })
         .then(() => {
-          toast.success("Bio updated successfully");
+          toast.success('Bio updated successfully');
           closeRef?.current?.click();
+          router.refresh();
         })
-        .catch(() => toast.error("Something went wrong"));
+        .catch(() => toast.error('Something went wrong'));
     });
   };
 

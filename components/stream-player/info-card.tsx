@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { Pencil } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import Image from "next/image";
-import { InfoModal } from "./info-modal";
+import { Pencil } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import Image from 'next/image';
+import { InfoModal } from './info-modal';
 
 interface InfoCardProps {
   name: string;
-  thumbnailUrl: string | null;
+  thumbnail: string | null;
   hostIdentity: string;
   viewerIdentity: string;
 }
@@ -15,7 +15,7 @@ interface InfoCardProps {
 export const InfoCard = ({
   hostIdentity,
   name,
-  thumbnailUrl,
+  thumbnail,
   viewerIdentity,
 }: InfoCardProps) => {
   const hostAsViewer = `host-${hostIdentity}`;
@@ -38,7 +38,7 @@ export const InfoCard = ({
               Maximize your visibility
             </p>
           </div>
-          <InfoModal initialName={name} initialThumbnailUrl={thumbnailUrl} />
+          <InfoModal initialName={name} initialThumbnail={thumbnail} />
         </div>
         <Separator />
         <div className="p-4 lg:p-6 space-y-4">
@@ -48,11 +48,11 @@ export const InfoCard = ({
           </div>
           <div>
             <h3 className="text-sm text-muted-foreground mb-2">Thumbnail</h3>
-            {thumbnailUrl && (
+            {thumbnail && (
               <div className="relative aspect-video rounded-md overflow-hidden w-[200px] border border-white/10">
                 <Image
                   fill
-                  src={thumbnailUrl}
+                  src={thumbnail}
                   alt={name}
                   className="object-cover"
                 />

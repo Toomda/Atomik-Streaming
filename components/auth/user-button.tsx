@@ -1,20 +1,22 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { UserAvatar } from "../user-avatar";
-import { getSelf } from "@/lib/auth-service";
-import { signOut } from "@/next-auth";
-import { LogOut } from "lucide-react";
-import { SettingsModal } from "./settings-modal";
-import { DeleteModal } from "./delete-modal";
+} from '@/components/ui/dropdown-menu';
+import { UserAvatar } from '../user-avatar';
+import { getSelf } from '@/lib/auth-service';
+import { signOut } from '@/next-auth';
+import { LogOut } from 'lucide-react';
+import { SettingsModal } from './settings-modal';
+import { DeleteModal } from './delete-modal';
+import { getUserById } from '@/lib/user-service';
 
 export const UserButton = async ({ props }: any) => {
-  const user = await getSelf();
+  const self = await getSelf();
+  const user = await getUserById(self.id);
 
   if (!user) return null;
 
@@ -32,7 +34,7 @@ export const UserButton = async ({ props }: any) => {
         <DropdownMenuSeparator />
         <form
           action={async () => {
-            "use server";
+            'use server';
             await signOut();
           }}
         >

@@ -1,46 +1,15 @@
-import { db } from '@/lib/db';
+'use server';
+
 import { revalidatePath } from 'next/cache';
 import axios from 'axios';
 import { getSelf } from '../lib/auth-service';
+import { signOut } from 'next-auth/react';
 
 interface UserResponse {
   userId: string;
   email: string;
   token?: string;
 }
-
-interface User {
-  username: string;
-  bio: string;
-  image: string;
-}
-
-export const updateUser = async (values: Partial<User>) => {
-  const self = await getSelf();
-
-  const validData = {
-    bio: values.bio,
-    username: values.username,
-    image: values.image,
-  };
-
-  if (validData.username === '' || validData.username === null) {
-    throw new Error('Username is required');
-  }
-
-  const user = await db.user.update({
-    where: { id: self.id },
-    data: {
-      ...validData,
-    },
-  });
-
-  revalidatePath(`/u/${self.username}`);
-  revalidatePath(`/${self.username}`);
-  revalidatePath(`/`);
-
-  return user;
-};
 
 export const registerUser = async (
   username: string,
@@ -84,25 +53,39 @@ export const loginUser = async (username: string, password: string) => {
   return { userId: responseData.userId, token: responseData.token! };
 };
 
-// export const deleteUserById = async (id: string, password: string) => {
-//   if (!id || !password) {
-//     throw new Error('Please provide an id and a pasword');
-//   }
+export const deleteUserById = async (id: string) => {
+  const self = await getSelf();
 
-//   const user = await db.user.findUnique({
-//     where: { id },
-//   });
+  let response;
+  try {
+    response = await axios.delete(`http://localhost:5000/api/user/${self.id}`, {
+      headers: {
+        Authorization: `Bearer ${self.token}`,
+      },
+    });
+  } catch (error) {
+    throw new Error('Something went wrong, trying to update the user!');
+  }
 
-//   if (!user) {
-//     throw new Error('User not found');
-//   }
+  if (response.status !== 200) {
+    throw new Error(response.statusText);
+  }
+};
 
-//   const passwordIsCorrect = await bcrypt.compare(password, user.password);
+function base64ToFile(base64String: string, filename: string) {
+  // Decode the Base64 string
+  const byteString = atob(base64String.split(',')[1]);
+  // Create an array buffer and a view (as a byte array)
+  const arrayBuffer = new ArrayBuffer(byteString.length);
+  const int8Array = new Uint8Array(arrayBuffer);
+  for (let i = 0; i < byteString.length; i++) {
+    int8Array[i] = byteString.charCodeAt(i);
+  }
 
-//   if (passwordIsCorrect) {
-//     await db.user.delete({ where: { id: user.id } });
-//     await signOut();
-//   } else {
-//     throw new Error('Password was not correct');
-//   }
-// };
+  // Create a blob from the byte array
+  const blob = new Blob([arrayBuffer], { type: 'image/jpeg' });
+  // Create a file from the blob
+  const file = new File([blob], filename, { type: 'image/jpeg' });
+
+  return file;
+}

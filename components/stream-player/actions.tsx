@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useTransition } from "react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { useAuth } from "@/lib/auth";
-import { Heart } from "lucide-react";
-import { onFollow, onUnfollow } from "@/actions/follow";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useTransition } from 'react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { useAuth } from '@/lib/auth';
+import { Heart } from 'lucide-react';
+import { onFollow, onUnfollow } from '@/actions/follow';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ActionsProps {
   hostIdentity: string;
@@ -28,28 +28,26 @@ export const Actions = ({
   const handleFollow = () => {
     startTransition(() => {
       onFollow(hostIdentity)
-        .then((data) =>
-          toast.success(`You are now following ${data.following.username}`)
+        .then((following) =>
+          toast.success(`You are now following ${following}!`)
         )
-        .catch(() => toast.error("Something went wrong"));
+        .catch(() => toast.error('Something went wrong'));
     });
   };
 
   const handleUnfollow = () => {
     startTransition(() => {
       onUnfollow(hostIdentity)
-        .then((data) =>
-          toast.success(
-            `You are not following ${data.following.username} anymore`
-          )
+        .then((following) =>
+          toast.success(`You are not following ${following} anymore!`)
         )
-        .catch(() => toast.error("Something went wrong"));
+        .catch(() => toast.error('Something went wrong'));
     });
   };
 
   const toggleFollow = () => {
     if (!user) {
-      return router.push("/login");
+      return router.push('/login');
     }
 
     if (isHost) return;
@@ -70,9 +68,9 @@ export const Actions = ({
       className="w-full lg:w-auto"
     >
       <Heart
-        className={cn("h-4 w-4 mr-2", isFollowing ? "fill-white" : "fill-none")}
+        className={cn('h-4 w-4 mr-2', isFollowing ? 'fill-white' : 'fill-none')}
       />
-      {isFollowing ? "Unfollow" : "Follow"}
+      {isFollowing ? 'Unfollow' : 'Follow'}
     </Button>
   );
 };

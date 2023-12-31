@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
-import { getSelf } from "@/lib/auth-service";
+import { db } from '@/lib/db';
+import { getSelf } from '@/lib/auth-service';
 
 export const getSearch = async (term?: string) => {
   let userId;
@@ -45,15 +45,15 @@ export const getSearch = async (term?: string) => {
         id: true,
         name: true,
         isLive: true,
-        thumbnailUrl: true,
+        thumbnail: true,
         updatedAt: true,
       },
       orderBy: [
         {
-          isLive: "desc",
+          isLive: 'desc',
         },
         {
-          updatedAt: "desc",
+          updatedAt: 'desc',
         },
       ],
     });
@@ -80,15 +80,15 @@ export const getSearch = async (term?: string) => {
         id: true,
         name: true,
         isLive: true,
-        thumbnailUrl: true,
+        thumbnail: true,
         updatedAt: true,
       },
       orderBy: [
         {
-          isLive: "desc",
+          isLive: 'desc',
         },
         {
-          updatedAt: "desc",
+          updatedAt: 'desc',
         },
       ],
     });

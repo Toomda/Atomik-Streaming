@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
-import { getSelf } from "@/lib/auth-service";
+import { db } from '@/lib/db';
+import { getSelf } from '@/lib/auth-service';
 
 export const getStreams = async () => {
   let userId;
@@ -29,16 +29,16 @@ export const getStreams = async () => {
       select: {
         id: true,
         user: true,
-        thumbnailUrl: true,
+        thumbnail: true,
         name: true,
         isLive: true,
       },
       orderBy: [
         {
-          isLive: "desc",
+          isLive: 'desc',
         },
         {
-          updatedAt: "desc",
+          updatedAt: 'desc',
         },
       ],
     });
@@ -47,16 +47,16 @@ export const getStreams = async () => {
       select: {
         id: true,
         user: true,
-        thumbnailUrl: true,
+        thumbnail: true,
         name: true,
         isLive: true,
       },
       orderBy: [
         {
-          isLive: "desc",
+          isLive: 'desc',
         },
         {
-          updatedAt: "desc",
+          updatedAt: 'desc',
         },
       ],
     });

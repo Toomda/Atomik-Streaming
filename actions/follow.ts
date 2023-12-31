@@ -1,35 +1,60 @@
-"use server";
+'use server';
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath } from 'next/cache';
 
-import { followUser, unfollowUser } from "@/lib/follow-service";
+import axios from 'axios';
+import { getSelf } from '@/lib/auth-service';
 
 export const onFollow = async (id: string) => {
-  try {
-    const followedUser = await followUser(id);
+  const self = await getSelf();
 
-    revalidatePath("/");
-    if (followedUser) {
-      revalidatePath(`/${followedUser.following.username}`);
+  try {
+    const response = await axios
+      .post(`http://localhost:5000/api/user/follow/${id}`, null, {
+        headers: {
+          Authorization: `Bearer ${self.token}`,
+        },
+      })
+      .catch((err) => {
+        throw new Error(err.response.statusText);
+      });
+
+    console.log('after post request');
+
+    revalidatePath('/');
+    if (response.data.followed) {
+      revalidatePath(`/${response.data.followed}`);
     }
 
-    return followedUser;
+    console.log('after revalidating');
+    console.log(response.data);
+    return response.data.followed;
   } catch (error) {
-    throw new Error("Internal Error");
+    throw new Error('Internal Error');
   }
 };
 
 export const onUnfollow = async (id: string) => {
-  try {
-    const unfollowedUser = await unfollowUser(id);
+  const self = await getSelf();
 
-    revalidatePath("/");
-    if (unfollowedUser) {
-      revalidatePath(`/${unfollowedUser.following.username}`);
+  try {
+    const response = await axios
+      .post(`http://localhost:5000/api/user/unfollow/${id}`, null, {
+        headers: {
+          Authorization: `Bearer ${self.token}`,
+        },
+      })
+      .catch((err) => {
+        throw new Error(err.response.statusText);
+      });
+
+    revalidatePath('/');
+    if (response.data.followed) {
+      revalidatePath(`/${response.data.followed}`);
     }
 
-    return unfollowedUser;
+    return response.data.followed;
   } catch (error) {
-    throw new Error("Internal Error");
+    throw new Error('Internal Error');
   }
 };

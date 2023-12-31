@@ -1,14 +1,20 @@
+'use server';
+
 import { currentUser } from '@/lib/auth';
 
 import axios from 'axios';
 
 export const getSelf = async () => {
-  const self = await currentUser();
-
+  let self;
+  try {
+    self = await currentUser();
+  } catch (error) {
+    console.log(error);
+    throw new Error('Error');
+  }
   if (!self || !self.username) {
     throw new Error('Unauthorized');
   }
-
   let response;
   try {
     response = await axios.get(`http://localhost:5000/api/user/${self.id}`);
@@ -19,9 +25,7 @@ export const getSelf = async () => {
   if (response.status !== 200) {
     throw new Error(response.statusText);
   }
-
   const user = response.data.user;
-
   return {
     id: user.id,
     username: user.username,

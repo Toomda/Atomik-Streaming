@@ -1,36 +1,8 @@
 'use server';
 
-import { IngressClient, RoomServiceClient } from 'livekit-server-sdk';
-
 import { getSelf } from '@/lib/auth-service';
 import { revalidatePath } from 'next/cache';
 import axios from 'axios';
-
-const roomService = new RoomServiceClient(
-  process.env.LIVEKIT_API_URL!,
-  process.env.LIVEKIT_API_KEY!,
-  process.env.LIVEKIT_API_SECRET!
-);
-
-const ingressClient = new IngressClient(process.env.LIVEKIT_API_URL!);
-
-export const resetIngresses = async (hostIdentiy: string) => {
-  const ingresses = await ingressClient.listIngress({
-    roomName: hostIdentiy,
-  });
-
-  const rooms = await roomService.listRooms([hostIdentiy]);
-
-  for (const room of rooms) {
-    await roomService.deleteRoom(room.name);
-  }
-
-  for (const ingress of ingresses) {
-    if (ingress.ingressId) {
-      await ingressClient.deleteIngress(ingress.ingressId);
-    }
-  }
-};
 
 export const createIngress = async () => {
   const self = await getSelf();

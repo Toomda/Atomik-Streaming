@@ -1,16 +1,16 @@
-import { LiveBadge } from "@/components/live-badge";
-import { Thumbnail, ThumbnailSkeleton } from "@/components/thumbnail";
-import { UserAvatar, UserAvatarSkeleton } from "@/components/user-avatar";
-import { User, Stream } from "@prisma/client";
-import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
+import { LiveBadge } from '@/components/live-badge';
+import { Thumbnail, ThumbnailSkeleton } from '@/components/thumbnail';
+import { UserAvatar, UserAvatarSkeleton } from '@/components/user-avatar';
+import { User, Stream } from '@prisma/client';
+import Link from 'next/link';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ResultCardProps {
   data: {
     user: User;
     isLive: boolean;
     name: string;
-    thumbnailUrl: string | null;
+    thumbnail: string | null;
   };
 }
 
@@ -19,7 +19,7 @@ export const ResultCard = ({ data }: ResultCardProps) => {
     <Link href={`/${data.user.username}`}>
       <div className="h-full w-full space-y-4 ">
         <Thumbnail
-          src={data.thumbnailUrl}
+          src={data.thumbnail}
           fallback={data.user.image!}
           isLive={data.isLive}
           username={data.user.username!}

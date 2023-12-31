@@ -1,12 +1,12 @@
-import { getSelf } from "@/lib/auth-service";
-import { db } from "@/lib/db";
-import { createUploadthing, type FileRouter } from "uploadthing/next";
+import { getSelf } from '@/lib/auth-service';
+import { db } from '@/lib/db';
+import { createUploadthing, type FileRouter } from 'uploadthing/next';
 
 const f = createUploadthing();
 
 export const ourFileRouter = {
   imageUploader: f({
-    image: { maxFileSize: "4MB", maxFileCount: 1 },
+    image: { maxFileSize: '4MB', maxFileCount: 1 },
   })
     .middleware(async () => {
       const self = await getSelf();
@@ -24,7 +24,7 @@ export const ourFileRouter = {
       return { fileUrl: file.url };
     }),
   thumbnailUploader: f({
-    image: { maxFileSize: "4MB", maxFileCount: 1 },
+    image: { maxFileSize: '4MB', maxFileCount: 1 },
   })
     .middleware(async () => {
       const self = await getSelf();
@@ -35,7 +35,7 @@ export const ourFileRouter = {
       await db.stream.update({
         where: { userId: metadata.user.id },
         data: {
-          thumbnailUrl: file.url,
+          thumbnail: file.url,
         },
       });
 

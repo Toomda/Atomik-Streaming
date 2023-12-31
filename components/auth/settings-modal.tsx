@@ -13,11 +13,14 @@ import { Hint } from '@/components/hint';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { useState, useTransition, useRef, ElementRef } from 'react';
-// import { updateUser } from "@/actions/user";
+import { updateUser } from '../../lib/user-service';
 import { toast } from 'sonner';
 import { Settings, Trash } from 'lucide-react';
 import { UploadDropzone } from '@/lib/uploadthing';
 import { usePathname, useRouter } from 'next/navigation';
+import ImageUpload from './image-upload';
+import axios from 'axios';
+import { getSelf } from '@/lib/auth-service';
 
 interface SettingsModalProps {
   initialUsername: string;
@@ -29,36 +32,51 @@ export const SettingsModal = ({
   initialImage,
 }: SettingsModalProps) => {
   const [username, setUsername] = useState(initialUsername || '');
-  const [image, setImage] = useState(initialImage || '');
+  const [image, setImage] = useState<File>();
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const closeRef = useRef<ElementRef<'button'>>(null);
   const pathname = usePathname();
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // startTransition(() => {
-    //   updateUser({ username: username })
-    //     .then(() => {
-    //       if (pathname.includes(initialUsername)) {
-    //         router.push(pathname.replace(initialUsername, username));
-    //       }
-    //       toast.success("Username successfully updated");
-    //       closeRef?.current?.click();
-    //     })
-    //     .catch(() => toast.error("Something went wrong"));
-    // });
+
+    if (!username) {
+      toast.error('Username can not be empty');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', image!);
+    formData.append('username', username);
+
+    startTransition(() => {
+      updateUser({ username: username, image: image })
+        .then(() => {
+          if (pathname.includes(initialUsername)) {
+            router.push(pathname.replace(initialUsername, username));
+          }
+          router.refresh();
+          toast.success('User successfully updated');
+          closeRef?.current?.click();
+        })
+        .catch((err) => toast.error(err.message));
+    });
   };
 
   const onRemoveImage = () => {
     // startTransition(() => {
     //   updateUser({ image: null })
     //     .then(() => {
-    //       toast.success("Image removed");
-    //       setImage("");
+    //       toast.success('Image removed');
+    //       setImage(undefined);
     //     })
-    //     .catch(() => toast.error("Something went wrong"));
+    //     .catch(() => toast.error('Something went wrong'));
     // });
+  };
+
+  const inputHandler = (file: File) => {
+    setImage(file);
   };
 
   return (
@@ -80,7 +98,13 @@ export const SettingsModal = ({
             onChange={(e) => setUsername(e.target.value)}
             disabled={isPending}
           />
-          {image ? (
+          <ImageUpload
+            center
+            errorText="Something went wrong"
+            id="image"
+            onInput={inputHandler}
+          />
+          {/* {image ? (
             <div className="relative aspect-video rounded-xl overflow-hidden border border-white/10">
               <div className="absolute top-2 right-2 z-[10]">
                 <Hint label="Remove image" asChild side="left">
@@ -112,7 +136,7 @@ export const SettingsModal = ({
                 }}
               />
             </div>
-          )}
+          )} */}
           <div className="flex justify-between">
             <DialogClose ref={closeRef} asChild>
               <Button type="button" variant="ghost">
