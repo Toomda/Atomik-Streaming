@@ -1,8 +1,8 @@
-import { getSelfByUsername } from "@/lib/auth-service";
-import { redirect } from "next/navigation";
-import { Navbar } from "./_components/navbar";
-import { Sidebar } from "./_components/sidebar";
-import { Container } from "./_components/container";
+import { getSelf } from '@/lib/auth-service';
+import { redirect } from 'next/navigation';
+import { Navbar } from './_components/navbar';
+import { Sidebar } from './_components/sidebar';
+import { Container } from './_components/container';
 
 interface CreatorLayoutProps {
   params: {
@@ -12,10 +12,10 @@ interface CreatorLayoutProps {
 }
 
 const CreatorLayout = async ({ params, children }: CreatorLayoutProps) => {
-  const self = await getSelfByUsername(params.username);
+  const self = await getSelf();
 
   if (!self) {
-    redirect("/");
+    redirect('/');
   }
 
   return (

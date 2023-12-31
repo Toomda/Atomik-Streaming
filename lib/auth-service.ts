@@ -1,43 +1,31 @@
-import { currentUser } from "@/lib/auth";
+import { currentUser } from '@/lib/auth';
 
-import { db } from "@/lib/db";
+import axios from 'axios';
 
 export const getSelf = async () => {
   const self = await currentUser();
 
   if (!self || !self.username) {
-    throw new Error("Unauthorized");
+    throw new Error('Unauthorized');
   }
 
-  const user = await db.user.findUnique({
-    where: { id: self.id },
-  });
-
-  if (!user) {
-    throw new Error("user not found");
+  let response;
+  try {
+    response = await axios.get(`http://localhost:5000/api/user/${self.id}`);
+  } catch (error) {
+    throw new Error('Failed getting user');
   }
 
-  return user;
-};
-
-export const getSelfByUsername = async (username: string) => {
-  const self = await currentUser();
-
-  if (!self || !self.username) {
-    throw new Error("Unauthorized");
+  if (response.status !== 200) {
+    throw new Error(response.statusText);
   }
 
-  const user = await db.user.findUnique({
-    where: { username },
-  });
+  const user = response.data.user;
 
-  if (!user) {
-    throw new Error("User not found");
-  }
-
-  if (!(self.username === user.username)) {
-    throw new Error("Unauthorized");
-  }
-
-  return user;
+  return {
+    id: user.id,
+    username: user.username,
+    image: user.image,
+    token: self.accessToken,
+  };
 };

@@ -1,15 +1,15 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "sonner";
-import { SessionProvider } from "next-auth/react";
-import { auth } from "@/next-auth";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from 'sonner';
+import { SessionProvider } from 'next-auth/react';
+import { auth } from '@/next-auth';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Atomik Streaming",
+  title: 'Atomik Streaming',
   description: "Let's Play",
 };
 

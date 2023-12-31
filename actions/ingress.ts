@@ -1,19 +1,10 @@
-"use server";
+'use server';
 
-import {
-  IngressAudioEncodingPreset,
-  IngressInput,
-  IngressClient,
-  IngressVideoEncodingPreset,
-  RoomServiceClient,
-  type CreateIngressOptions,
-} from "livekit-server-sdk";
+import { IngressClient, RoomServiceClient } from 'livekit-server-sdk';
 
-import { TrackSource } from "livekit-server-sdk/dist/proto/livekit_models";
-
-import { db } from "@/lib/db";
-import { getSelf } from "@/lib/auth-service";
-import { revalidatePath } from "next/cache";
+import { getSelf } from '@/lib/auth-service';
+import { revalidatePath } from 'next/cache';
+import axios from 'axios';
 
 const roomService = new RoomServiceClient(
   process.env.LIVEKIT_API_URL!,
@@ -41,47 +32,30 @@ export const resetIngresses = async (hostIdentiy: string) => {
   }
 };
 
-export const createIngress = async (ingressType: IngressInput) => {
+export const createIngress = async () => {
   const self = await getSelf();
 
-  await resetIngresses(self.id);
+  console.log(self.token);
 
-  const options: CreateIngressOptions = {
-    name: self.username!,
-    roomName: self.id,
-    participantName: self.username!,
-    participantIdentity: self.id,
-  };
+  let response;
+  try {
+    response = await axios.get(
+      `http://localhost:5000/api/streamkey/generate/${self.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${self.token}`,
+        },
+      }
+    );
+  } catch (error) {}
 
-  if (ingressType === IngressInput.WHIP_INPUT) {
-    options.bypassTranscoding = true;
-  } else {
-    options.video = {
-      source: TrackSource.CAMERA,
-      preset: IngressVideoEncodingPreset.H264_1080P_30FPS_3_LAYERS,
-    };
-    options.audio = {
-      source: TrackSource.MICROPHONE,
-      preset: IngressAudioEncodingPreset.OPUS_STEREO_96KBPS,
-    };
+  if (!response || !response.data || response.status !== 200) {
+    throw new Error('An unexpected Error occured!');
   }
 
-  const ingress = await ingressClient.createIngress(ingressType, options);
-
-  if (!ingress || !ingress.url || !ingress.streamKey) {
-    throw new Error("Failed to create Ingress");
-  }
-
-  await db.stream.update({
-    where: { userId: self.id },
-    data: {
-      ingressId: ingress.ingressId,
-      serverUrl: ingress.url,
-      streamKey: ingress.streamKey,
-    },
-  });
+  console.log(response.data);
 
   revalidatePath(`/u/${self.username}/keys`);
 
-  return ingress;
+  return '';
 };

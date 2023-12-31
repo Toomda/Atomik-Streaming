@@ -1,5 +1,5 @@
-import { useSession as useNextAuthSession } from "next-auth/react";
-import { auth } from "@/next-auth";
+import { useSession as useNextAuthSession } from 'next-auth/react';
+import { auth } from '@/next-auth';
 
 export const useAuth = () => {
   const session = useNextAuthSession();

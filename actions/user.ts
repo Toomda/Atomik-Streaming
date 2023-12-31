@@ -1,11 +1,19 @@
-"use server";
+import { db } from '@/lib/db';
+import { revalidatePath } from 'next/cache';
+import axios from 'axios';
+import { getSelf } from '../lib/auth-service';
 
-import { getSelf } from "@/lib/auth-service";
-import { db } from "@/lib/db";
-import { User } from "@prisma/client";
-import { revalidatePath } from "next/cache";
-import bcrypt from "bcryptjs";
-import { auth, signOut } from "@/next-auth";
+interface UserResponse {
+  userId: string;
+  email: string;
+  token?: string;
+}
+
+interface User {
+  username: string;
+  bio: string;
+  image: string;
+}
 
 export const updateUser = async (values: Partial<User>) => {
   const self = await getSelf();
@@ -16,8 +24,8 @@ export const updateUser = async (values: Partial<User>) => {
     image: values.image,
   };
 
-  if (validData.username === "" || validData.username === null) {
-    throw new Error("Username is required");
+  if (validData.username === '' || validData.username === null) {
+    throw new Error('Username is required');
   }
 
   const user = await db.user.update({
@@ -40,49 +48,61 @@ export const registerUser = async (
   email: string
 ) => {
   if (!email || !username || !password) {
-    throw new Error("You need an email, username and password");
+    throw new Error('You need an email, username and password');
   }
 
-  const hashPassword = await bcrypt.hash(password, 10);
-
-  const user = await db.user.create({
-    data: {
-      username: username,
-      password: hashPassword,
-      email: email,
-      stream: {
-        create: {
-          name: `${username}'s Stream`,
-        },
-      },
-    },
-    select: {
-      id: true,
-    },
+  const response = await axios.post('http://localhost:5000/api/user/register', {
+    email,
+    username,
+    password,
   });
 
-  return user;
-};
-
-export const deleteUserById = async (id: string, password: string) => {
-  if (!id || !password) {
-    throw new Error("Please provide an id and a pasword");
+  if (response.status !== 201) {
+    throw new Error(
+      'Something went wrong, trying to register. Please try again.'
+    );
   }
 
-  const user = await db.user.findUnique({
-    where: { id },
+  const responseData: UserResponse = response.data;
+};
+
+export const loginUser = async (username: string, password: string) => {
+  if (!username || !password)
+    throw new Error('Pleas provide an email, and a password');
+
+  const response = await axios.post('http://localhost:5000/api/user/login', {
+    username,
+    password,
   });
 
-  if (!user) {
-    throw new Error("User not found");
+  if (response.status !== 200) {
+    throw new Error('Invalid Credentials! Please try again!');
   }
 
-  const passwordIsCorrect = await bcrypt.compare(password, user.password);
+  const responseData: UserResponse = response.data;
 
-  if (passwordIsCorrect) {
-    await db.user.delete({ where: { id: user.id } });
-    await signOut();
-  } else {
-    throw new Error("Password was not correct");
-  }
+  return { userId: responseData.userId, token: responseData.token! };
 };
+
+// export const deleteUserById = async (id: string, password: string) => {
+//   if (!id || !password) {
+//     throw new Error('Please provide an id and a pasword');
+//   }
+
+//   const user = await db.user.findUnique({
+//     where: { id },
+//   });
+
+//   if (!user) {
+//     throw new Error('User not found');
+//   }
+
+//   const passwordIsCorrect = await bcrypt.compare(password, user.password);
+
+//   if (passwordIsCorrect) {
+//     await db.user.delete({ where: { id: user.id } });
+//     await signOut();
+//   } else {
+//     throw new Error('Password was not correct');
+//   }
+// };

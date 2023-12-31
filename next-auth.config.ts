@@ -1,54 +1,41 @@
-import { NextAuthConfig } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { db } from "./lib/db";
-import bcrypt from "bcryptjs";
+import { NextAuthConfig } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { db } from './lib/db';
+import bcrypt from 'bcryptjs';
+import axios from 'axios';
 
 export default {
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "username" },
-        password: { label: "Password", type: "password" },
+        username: { label: 'Username', type: 'text', placeholder: 'username' },
+        password: { label: 'Password', type: 'password' },
       },
-      type: "credentials",
+      type: 'credentials',
       async authorize(credentials) {
         // Add logic here to look up the user from the credentials supplied
-        const user = await db.user.findUnique({
-          where: {
-            username: credentials.username as string,
-          },
-          select: {
-            username: true,
-            password: true,
-            id: true,
-          },
-        });
-
-        if (user) {
-          const dbHashPassword = user.password;
-          const credentialPassword = credentials?.password as string | "";
-
-          const passwordCorrect = await bcrypt.compare(
-            credentialPassword,
-            dbHashPassword
-          );
-
-          if (!passwordCorrect) {
-            return null;
-          }
-
-          return {
-            id: user.id,
-            username: user.username,
-            password: user.password,
-          };
-        } else {
-          // If you return null then an error will be displayed advising the user to check their details.
+        let response;
+        try {
+          response = await axios.post('http://localhost:5000/api/user/login', {
+            username: credentials.username,
+            password: credentials.password,
+          });
+        } catch (error) {
           return null;
-
-          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
         }
+
+        const responseData = response.data;
+
+        return {
+          id: responseData.userId,
+          username: credentials.username,
+          name: credentials.username as string,
+          accessToken: responseData.token,
+        };
+        // If you return null then an error will be displayed advising the user to check their details.
+
+        // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
       },
     }),
   ],

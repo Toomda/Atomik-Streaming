@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Dialog,
@@ -7,17 +7,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Hint } from "@/components/hint";
-import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import { useState, useTransition, useRef, ElementRef } from "react";
-import { updateUser } from "@/actions/user";
-import { toast } from "sonner";
-import { Settings, Trash } from "lucide-react";
-import { UploadDropzone } from "@/lib/uploadthing";
-import { usePathname, useRouter } from "next/navigation";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Hint } from '@/components/hint';
+import { Input } from '@/components/ui/input';
+import Image from 'next/image';
+import { useState, useTransition, useRef, ElementRef } from 'react';
+// import { updateUser } from "@/actions/user";
+import { toast } from 'sonner';
+import { Settings, Trash } from 'lucide-react';
+import { UploadDropzone } from '@/lib/uploadthing';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface SettingsModalProps {
   initialUsername: string;
@@ -28,37 +28,37 @@ export const SettingsModal = ({
   initialUsername,
   initialImage,
 }: SettingsModalProps) => {
-  const [username, setUsername] = useState(initialUsername || "");
-  const [image, setImage] = useState(initialImage || "");
+  const [username, setUsername] = useState(initialUsername || '');
+  const [image, setImage] = useState(initialImage || '');
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
-  const closeRef = useRef<ElementRef<"button">>(null);
+  const closeRef = useRef<ElementRef<'button'>>(null);
   const pathname = usePathname();
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    startTransition(() => {
-      updateUser({ username: username })
-        .then(() => {
-          if (pathname.includes(initialUsername)) {
-            router.push(pathname.replace(initialUsername, username));
-          }
-          toast.success("Username successfully updated");
-          closeRef?.current?.click();
-        })
-        .catch(() => toast.error("Something went wrong"));
-    });
+    // startTransition(() => {
+    //   updateUser({ username: username })
+    //     .then(() => {
+    //       if (pathname.includes(initialUsername)) {
+    //         router.push(pathname.replace(initialUsername, username));
+    //       }
+    //       toast.success("Username successfully updated");
+    //       closeRef?.current?.click();
+    //     })
+    //     .catch(() => toast.error("Something went wrong"));
+    // });
   };
 
   const onRemoveImage = () => {
-    startTransition(() => {
-      updateUser({ image: null })
-        .then(() => {
-          toast.success("Image removed");
-          setImage("");
-        })
-        .catch(() => toast.error("Something went wrong"));
-    });
+    // startTransition(() => {
+    //   updateUser({ image: null })
+    //     .then(() => {
+    //       toast.success("Image removed");
+    //       setImage("");
+    //     })
+    //     .catch(() => toast.error("Something went wrong"));
+    // });
   };
 
   return (
@@ -101,9 +101,9 @@ export const SettingsModal = ({
               <UploadDropzone
                 endpoint="imageUploader"
                 appearance={{
-                  label: { color: "#FFFFFF" },
+                  label: { color: '#FFFFFF' },
                   allowedContent: {
-                    color: "#FFFFFF",
+                    color: '#FFFFFF',
                   },
                 }}
                 onClientUploadComplete={(res) => {

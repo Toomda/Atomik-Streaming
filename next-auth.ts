@@ -1,8 +1,9 @@
-import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import NextAuth from 'next-auth';
+import { PrismaAdapter } from '@auth/prisma-adapter';
 
-import { db } from "./lib/db";
-import authConfig from "./next-auth.config";
+import { db } from './lib/db';
+import authConfig from './next-auth.config';
+import axios from 'axios';
 
 export const {
   handlers: { GET, POST },
@@ -10,38 +11,46 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
-  adapter: PrismaAdapter(db),
   pages: {
-    signIn: "/login",
+    signIn: '/login',
   },
-  session: { strategy: "jwt" },
+  session: { strategy: 'jwt' },
   callbacks: {
     async session({ token, session }) {
-      return {
-        ...session,
-        user: {
-          username: token.username as string,
-          id: token.sub as string,
-        },
-      };
+      if (!token.sub) {
+        return {
+          ...session,
+          user: {
+            id: token.sub as string,
+            accessToken: token.accessToken,
+          },
+        };
+      }
+      const response = await axios.get(
+        `http://localhost:5000/api/user/${token.sub}`
+      );
+
+      if (response.status !== 200 || !response.data.user) {
+        return {
+          ...session,
+          user: {
+            id: token.sub as string,
+            accessToken: token.accessToken,
+          },
+        };
+      } else {
+        return {
+          ...session,
+          user: {
+            username: response.data.user.username as string,
+            id: token.sub as string,
+            accessToken: token.accessToken,
+          },
+        };
+      }
     },
-    async jwt({ token }) {
-      const id = token.sub;
-      if (!id) return token;
-
-      const dbUser = await db.user.findUnique({
-        where: { id },
-        select: {
-          username: true,
-        },
-      });
-
-      if (!dbUser) return token;
-
-      return {
-        ...token,
-        username: dbUser.username,
-      };
+    async jwt({ token, user }) {
+      return { ...token, ...user };
     },
   },
   ...authConfig,
