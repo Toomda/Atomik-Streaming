@@ -1,9 +1,8 @@
-import { db } from '@/lib/db';
 import { getSelf } from '@/lib/auth-service';
+import axios from 'axios';
 
 export const getStreams = async () => {
   let userId;
-
   try {
     const self = await getSelf();
     userId = self.id;
@@ -11,56 +10,16 @@ export const getStreams = async () => {
     userId = null;
   }
 
-  let streams = [];
-
-  if (userId) {
-    streams = await db.stream.findMany({
-      where: {
-        user: {
-          NOT: {
-            blocking: {
-              some: {
-                blockedId: userId,
-              },
-            },
-          },
-        },
+  let response;
+  try {
+    response = await axios.get('http://localhost:5000/api/livestreams/', {
+      data: {
+        uid: userId,
       },
-      select: {
-        id: true,
-        user: true,
-        thumbnail: true,
-        name: true,
-        isLive: true,
-      },
-      orderBy: [
-        {
-          isLive: 'desc',
-        },
-        {
-          updatedAt: 'desc',
-        },
-      ],
     });
-  } else {
-    streams = await db.stream.findMany({
-      select: {
-        id: true,
-        user: true,
-        thumbnail: true,
-        name: true,
-        isLive: true,
-      },
-      orderBy: [
-        {
-          isLive: 'desc',
-        },
-        {
-          updatedAt: 'desc',
-        },
-      ],
-    });
+  } catch (error) {
+    throw new Error('Error while retrieving Streams');
   }
 
-  return streams;
+  return response.data.streams;
 };

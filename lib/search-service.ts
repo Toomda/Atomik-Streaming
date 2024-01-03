@@ -1,5 +1,5 @@
-import { db } from '@/lib/db';
 import { getSelf } from '@/lib/auth-service';
+import axios from 'axios';
 
 export const getSearch = async (term?: string) => {
   let userId;
@@ -11,88 +11,20 @@ export const getSearch = async (term?: string) => {
     userId = null;
   }
 
-  let streams = [];
-
-  if (userId) {
-    streams = await db.stream.findMany({
-      where: {
-        user: {
-          NOT: {
-            blocking: {
-              some: {
-                blockedId: userId,
-              },
-            },
-          },
+  let response;
+  try {
+    response = await axios.get(
+      `http://localhost:5000/api/livestreams/search/${term}`,
+      {
+        data: {
+          uid: userId,
         },
-        OR: [
-          {
-            name: {
-              contains: term,
-            },
-          },
-          {
-            user: {
-              username: {
-                contains: term,
-              },
-            },
-          },
-        ],
-      },
-      select: {
-        user: true,
-        id: true,
-        name: true,
-        isLive: true,
-        thumbnail: true,
-        updatedAt: true,
-      },
-      orderBy: [
-        {
-          isLive: 'desc',
-        },
-        {
-          updatedAt: 'desc',
-        },
-      ],
-    });
-  } else {
-    streams = await db.stream.findMany({
-      where: {
-        OR: [
-          {
-            name: {
-              contains: term,
-            },
-          },
-          {
-            user: {
-              username: {
-                contains: term,
-              },
-            },
-          },
-        ],
-      },
-      select: {
-        user: true,
-        id: true,
-        name: true,
-        isLive: true,
-        thumbnail: true,
-        updatedAt: true,
-      },
-      orderBy: [
-        {
-          isLive: 'desc',
-        },
-        {
-          updatedAt: 'desc',
-        },
-      ],
-    });
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    throw new Error('Error while trying to get the search');
   }
 
-  return streams;
+  return response.data.streams;
 };

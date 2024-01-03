@@ -2,7 +2,6 @@
 
 import { Pencil } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import Image from 'next/image';
 import { InfoModal } from './info-modal';
 
 interface InfoCardProps {
@@ -48,16 +47,6 @@ export const InfoCard = ({
           </div>
           <div>
             <h3 className="text-sm text-muted-foreground mb-2">Thumbnail</h3>
-            {thumbnail && (
-              <div className="relative aspect-video rounded-md overflow-hidden w-[200px] border border-white/10">
-                <Image
-                  fill
-                  src={thumbnail}
-                  alt={name}
-                  className="object-cover"
-                />
-              </div>
-            )}
           </div>
         </div>
       </div>

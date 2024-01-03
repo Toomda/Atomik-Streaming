@@ -1,7 +1,7 @@
-import Image from "next/image";
-import { UserAvatar } from "./user-avatar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { LiveBadge } from "./live-badge";
+import Image from 'next/image';
+import { UserAvatar } from './user-avatar';
+import { Skeleton } from '@/components/ui/skeleton';
+import { LiveBadge } from './live-badge';
 
 interface ThumbnailProps {
   src: string | null;
@@ -32,7 +32,7 @@ export const Thumbnail = ({
   } else {
     content = (
       <Image
-        src={src}
+        src={`http://localhost:5000/api/${src}`}
         fill
         alt="Thumbnail"
         className="object-cover transition-transform group-hover:translate-x-2 group-hover:-translate-y-2 rounded-md"

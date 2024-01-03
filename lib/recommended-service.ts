@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
-import { getSelf } from "@/lib/auth-service";
+import { getSelf } from '@/lib/auth-service';
+import axios from 'axios';
 
 export const getRecommended = async () => {
   let userId;
@@ -11,72 +11,17 @@ export const getRecommended = async () => {
     userId = null;
   }
 
-  let users = [];
-
-  if (userId) {
-    users = await db.user.findMany({
-      where: {
-        AND: [
-          {
-            NOT: {
-              id: userId,
-            },
-          },
-          {
-            NOT: {
-              followedBy: {
-                some: {
-                  followerId: userId,
-                },
-              },
-            },
-          },
-          {
-            NOT: {
-              blocking: {
-                some: {
-                  blockedId: userId,
-                },
-              },
-            },
-          },
-        ],
+  let response;
+  try {
+    response = await axios.get('http://localhost:5000/api/user/recommended', {
+      data: {
+        uid: userId,
       },
-      include: {
-        stream: {
-          select: {
-            isLive: true,
-          },
-        },
-      },
-      orderBy: [
-        {
-          stream: {
-            isLive: "desc",
-          },
-        },
-        { createdAt: "desc" },
-      ],
     });
-  } else {
-    users = await db.user.findMany({
-      include: {
-        stream: {
-          select: {
-            isLive: true,
-          },
-        },
-      },
-      orderBy: [
-        {
-          stream: {
-            isLive: "desc",
-          },
-        },
-        { createdAt: "desc" },
-      ],
-    });
+  } catch (error) {
+    console.log(error);
+    throw new Error('Error while getting recommended Users');
   }
 
-  return users;
+  return response.data.users;
 };

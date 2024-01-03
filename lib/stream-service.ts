@@ -1,11 +1,14 @@
-import { db } from "@/lib/db";
+import axios from 'axios';
 
 export const getStreamByUserId = async (userId: string) => {
-  const stream = await db.stream.findUnique({
-    where: {
-      userId,
-    },
-  });
+  let response;
+  try {
+    response = await axios.get(
+      `http://localhost:5000/api/livestreams/${userId}`
+    );
+  } catch (error) {
+    throw new Error(`Could not get Livestream for userId ${userId}`);
+  }
 
-  return stream;
+  return response.data.stream;
 };

@@ -19,15 +19,11 @@ export const onFollow = async (id: string) => {
         throw new Error(err.response.statusText);
       });
 
-    console.log('after post request');
-
     revalidatePath('/');
     if (response.data.followed) {
       revalidatePath(`/${response.data.followed}`);
     }
 
-    console.log('after revalidating');
-    console.log(response.data);
     return response.data.followed;
   } catch (error) {
     throw new Error('Internal Error');

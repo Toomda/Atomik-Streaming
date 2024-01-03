@@ -11,6 +11,11 @@ interface UserResponse {
   token?: string;
 }
 
+interface User {
+  username: string;
+  bio: string;
+}
+
 export const registerUser = async (
   username: string,
   password: string,
@@ -72,20 +77,41 @@ export const deleteUserById = async (id: string) => {
   }
 };
 
-function base64ToFile(base64String: string, filename: string) {
-  // Decode the Base64 string
-  const byteString = atob(base64String.split(',')[1]);
-  // Create an array buffer and a view (as a byte array)
-  const arrayBuffer = new ArrayBuffer(byteString.length);
-  const int8Array = new Uint8Array(arrayBuffer);
-  for (let i = 0; i < byteString.length; i++) {
-    int8Array[i] = byteString.charCodeAt(i);
+export const updateUser = async (values: Partial<User>) => {
+  const self = await getSelf();
+
+  let response;
+  try {
+    const validData = {
+      bio: values.bio,
+      username: values.username,
+    };
+
+    console.log(validData);
+    console.log(values.username);
+
+    response = await axios.patch(
+      `http://localhost:5000/api/user/${self.id}`,
+      validData,
+      {
+        headers: {
+          Authorization: `Bearer ${self.token}`,
+        },
+      }
+    );
+  } catch (error) {
+    throw new Error('Something went wrong, trying to update the user!');
   }
 
-  // Create a blob from the byte array
-  const blob = new Blob([arrayBuffer], { type: 'image/jpeg' });
-  // Create a file from the blob
-  const file = new File([blob], filename, { type: 'image/jpeg' });
+  if (response.status !== 200) {
+    throw new Error(response.statusText);
+  }
 
-  return file;
-}
+  const updatedUser = response.data.user;
+
+  revalidatePath(`/u/${self.username}`);
+  revalidatePath(`/${self.username}`);
+  revalidatePath(`/`);
+
+  return updatedUser;
+};

@@ -7,8 +7,6 @@ import axios from 'axios';
 export const createIngress = async () => {
   const self = await getSelf();
 
-  console.log(self.token);
-
   let response;
   try {
     response = await axios.get(
@@ -24,8 +22,6 @@ export const createIngress = async () => {
   if (!response || !response.data || response.status !== 200) {
     throw new Error('An unexpected Error occured!');
   }
-
-  console.log(response.data);
 
   revalidatePath(`/u/${self.username}/keys`);
 

@@ -9,7 +9,6 @@ export const getSelf = async () => {
   try {
     self = await currentUser();
   } catch (error) {
-    console.log(error);
     throw new Error('Error');
   }
   if (!self || !self.username) {

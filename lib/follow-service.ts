@@ -1,77 +1,40 @@
-import { db } from '@/lib/db';
 import { getSelf } from '@/lib/./auth-service';
+import axios from 'axios';
 
 export const getFollowedUsers = async () => {
+  let self;
   try {
-    const self = await getSelf();
-
-    const followedUsers = db.follow.findMany({
-      where: {
-        followerId: self.id,
-        following: {
-          blocking: {
-            none: {
-              blockedId: self.id,
-            },
-          },
-        },
-      },
-      include: {
-        following: {
-          include: {
-            stream: {
-              select: {
-                isLive: true,
-              },
-            },
-          },
-        },
-      },
-      orderBy: [
-        {
-          following: {
-            stream: {
-              isLive: 'desc',
-            },
-          },
-        },
-        {
-          createdAt: 'desc',
-        },
-      ],
-    });
-
-    return followedUsers;
+    self = await getSelf();
   } catch (error) {
     return [];
   }
+
+  let response;
+  try {
+    response = await axios.get('http://localhost:5000/api/user/follow/all', {
+      headers: {
+        Authorization: `Bearer ${self.token}`,
+      },
+    });
+  } catch (error) {
+    return [];
+  }
+  return response.data.followedUsers;
 };
 
 export const isFollowingUser = async (id: string) => {
+  let response;
   try {
     const self = await getSelf();
 
-    const otherUser = await db.user.findUnique({
-      where: { id },
-    });
-
-    if (!otherUser) {
-      throw new Error('User not found');
-    }
-
-    if (otherUser.id === self.id) {
-      return true;
-    }
-
-    const existingFollow = await db.follow.findFirst({
-      where: {
-        followerId: self.id,
-        followingId: otherUser.id,
+    response = await axios.get(`http://localhost:5000/api/user/follow/${id}`, {
+      headers: {
+        Authorization: `Bearer ${self.token}`,
       },
     });
-
-    return !!existingFollow;
   } catch (error) {
+    console.log(error);
     return false;
   }
+  return response.status === 200;
 };

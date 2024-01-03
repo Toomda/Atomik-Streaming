@@ -17,10 +17,12 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { updateStream } from '@/actions/stream';
 import { toast } from 'sonner';
-import { UploadDropzone } from '@/lib/uploadthing';
+// import { UploadDropzone } from '@/lib/upload-service';
 import { Hint } from '@/components/hint';
 import { Trash } from 'lucide-react';
 import Image from 'next/image';
+import ImageUpload from '../image-upload';
+import { uploadThumbnailByStreamId } from '@/lib/upload-service';
 
 interface InfoModalProps {
   initialName: string;
@@ -32,30 +34,21 @@ export const InfoModal = ({
   initialThumbnail,
 }: InfoModalProps) => {
   const [name, setName] = useState(initialName);
-  const [thumbnail, setThumbnail] = useState(initialThumbnail);
+  const [file, setFile] = useState<File | null>();
 
   const [isPending, startTransition] = useTransition();
   const closeRef = useRef<ElementRef<'button'>>(null);
   const router = useRouter();
 
-  const onRemoveThumbnail = () => {
-    startTransition(() => {
-      updateStream({ thumbnail: null })
-        .then(() => {
-          toast.success('Thumbnail removed');
-          setThumbnail('');
-        })
-        .catch(() => toast.error('Something went wrong'));
-    });
-  };
-
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     startTransition(() => {
       updateStream({ name: name })
-        .then(() => {
+        .then((stream) => {
+          if (file) uploadThumbnailByStreamId(file, stream.id);
           toast.success('Stream updated successfully');
           closeRef?.current?.click();
+          router.refresh();
         })
         .catch(() => toast.error('Something went wrong'));
     });
@@ -63,6 +56,10 @@ export const InfoModal = ({
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
+  };
+
+  const inputHandler = (file: File | null) => {
+    setFile(file);
   };
 
   return (
@@ -88,44 +85,12 @@ export const InfoModal = ({
           </div>
           <div className="space-y-2">
             <Label>Thumbnail</Label>
-            {thumbnail ? (
-              <div className="relative aspect-video rounded-xl overflow-hidden border border-white/10">
-                <div className="absolute top-2 right-2 z-[10]">
-                  <Hint label="Remove thumbnail" asChild side="left">
-                    <Button
-                      type="button"
-                      disabled={isPending}
-                      onClick={onRemoveThumbnail}
-                      className="h-auto w-auto p-1.5"
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
-                  </Hint>
-                </div>
-                <Image
-                  src={thumbnail}
-                  alt="Thumbnail"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            ) : (
-              <div className="rounded-xl border outline-dashed outline-muted">
-                <UploadDropzone
-                  endpoint="thumbnailUploader"
-                  appearance={{
-                    label: { color: '#FFFFFF' },
-                    allowedContent: {
-                      color: '#FFFFFF',
-                    },
-                  }}
-                  onClientUploadComplete={(res) => {
-                    setThumbnail(res?.[0]?.url);
-                    router.refresh();
-                  }}
-                />
-              </div>
-            )}
+            <ImageUpload
+              center
+              id="Image"
+              initialPreview={initialThumbnail || ''}
+              onInput={inputHandler}
+            />
           </div>
           <div className="flex justify-between">
             <DialogClose asChild ref={closeRef}>

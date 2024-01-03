@@ -13,10 +13,7 @@ const HlsPlayer = ({ src }: HlsPlayerProps) => {
 
   useEffect(() => {
     const video = videoRef.current;
-    console.log(video);
-    console.log(Hls.isSupported());
     if (Hls.isSupported() && video) {
-      console.log('in is supported function');
       const hls = new Hls({
         enableWorker: true,
         maxBufferLength: 1,
@@ -30,7 +27,6 @@ const HlsPlayer = ({ src }: HlsPlayerProps) => {
       hls.attachMedia(video);
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        console.log('manifest parsed');
         setOnline(true);
         video.play().catch((e) => console.error('Error playing video!', e));
       });

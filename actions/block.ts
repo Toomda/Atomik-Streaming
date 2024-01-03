@@ -1,7 +1,7 @@
 'use server';
 
 import { getSelf } from '@/lib/auth-service';
-import { blockUser, unblockUser } from '@/lib/block-service';
+// import { blockUser, unblockUser } from '@/lib/block-service';
 import { RoomServiceClient } from 'livekit-server-sdk';
 import { revalidatePath } from 'next/cache';
 import { relative } from 'path';

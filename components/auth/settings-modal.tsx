@@ -9,18 +9,14 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Hint } from '@/components/hint';
 import { Input } from '@/components/ui/input';
-import Image from 'next/image';
 import { useState, useTransition, useRef, ElementRef } from 'react';
-import { updateUser } from '../../lib/user-service';
+import { updateUser } from '../../actions/user';
 import { toast } from 'sonner';
 import { Settings, Trash } from 'lucide-react';
-import { UploadDropzone } from '@/lib/uploadthing';
 import { usePathname, useRouter } from 'next/navigation';
-import ImageUpload from './image-upload';
-import axios from 'axios';
-import { getSelf } from '@/lib/auth-service';
+import ImageUpload from '../image-upload';
+import { uploadImageByUserId } from '@/lib/upload-service';
 
 interface SettingsModalProps {
   initialUsername: string;
@@ -32,7 +28,7 @@ export const SettingsModal = ({
   initialImage,
 }: SettingsModalProps) => {
   const [username, setUsername] = useState(initialUsername || '');
-  const [image, setImage] = useState<File>();
+  const [image, setImage] = useState<File | null>();
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const closeRef = useRef<ElementRef<'button'>>(null);
@@ -46,13 +42,12 @@ export const SettingsModal = ({
       return;
     }
 
-    const formData = new FormData();
-    formData.append('image', image!);
-    formData.append('username', username);
-
     startTransition(() => {
-      updateUser({ username: username, image: image })
-        .then(() => {
+      updateUser({ username: username })
+        .then((user) => {
+          if (image) {
+            uploadImageByUserId(image, user.id);
+          }
           if (pathname.includes(initialUsername)) {
             router.push(pathname.replace(initialUsername, username));
           }
@@ -64,18 +59,7 @@ export const SettingsModal = ({
     });
   };
 
-  const onRemoveImage = () => {
-    // startTransition(() => {
-    //   updateUser({ image: null })
-    //     .then(() => {
-    //       toast.success('Image removed');
-    //       setImage(undefined);
-    //     })
-    //     .catch(() => toast.error('Something went wrong'));
-    // });
-  };
-
-  const inputHandler = (file: File) => {
+  const inputHandler = (file: File | null) => {
     setImage(file);
   };
 
@@ -99,44 +83,11 @@ export const SettingsModal = ({
             disabled={isPending}
           />
           <ImageUpload
+            initialPreview={initialImage || ''}
             center
-            errorText="Something went wrong"
             id="image"
             onInput={inputHandler}
           />
-          {/* {image ? (
-            <div className="relative aspect-video rounded-xl overflow-hidden border border-white/10">
-              <div className="absolute top-2 right-2 z-[10]">
-                <Hint label="Remove image" asChild side="left">
-                  <Button
-                    type="button"
-                    disabled={isPending}
-                    onClick={onRemoveImage}
-                    className="h-auto w-auto p-1.5"
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
-                </Hint>
-              </div>
-              <Image src={image} alt="Image" fill className="object-cover" />
-            </div>
-          ) : (
-            <div className="rounded-xl border outline-dashed outline-muted">
-              <UploadDropzone
-                endpoint="imageUploader"
-                appearance={{
-                  label: { color: '#FFFFFF' },
-                  allowedContent: {
-                    color: '#FFFFFF',
-                  },
-                }}
-                onClientUploadComplete={(res) => {
-                  setImage(res?.[0]?.url);
-                  router.refresh();
-                }}
-              />
-            </div>
-          )} */}
           <div className="flex justify-between">
             <DialogClose ref={closeRef} asChild>
               <Button type="button" variant="ghost">
