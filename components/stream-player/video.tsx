@@ -10,20 +10,24 @@ import { OfflineVideo } from './offline-video';
 import { LoadingVideo } from './loading-video';
 import { LiveVideo } from './live-video';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useRoom } from '@/lib/room/room-context';
 
 interface VideoProps {
   hostName: string;
   hostIdentity: string;
-  isLive: boolean;
 }
 
-export const Video = ({ hostName, hostIdentity, isLive }: VideoProps) => {
+export const Video = ({ hostName, hostIdentity }: VideoProps) => {
   const connectionState = useConnectionState();
   const participant = useRemoteParticipant(hostIdentity);
   const tracks = useTracks([
     Track.Source.Camera,
     Track.Source.Microphone,
   ]).filter((track) => track.participant.identity === hostIdentity);
+
+  const { isLive, remoteViewer } = useRoom();
+
+  console.log(remoteViewer);
 
   let content;
 

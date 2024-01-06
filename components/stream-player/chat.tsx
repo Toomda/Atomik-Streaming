@@ -7,8 +7,7 @@ import { ChatHeader, ChatHeaderSkeleton } from './chat-header';
 import { ChatForm, ChatFormSkeleton } from './chat-form';
 import { ChatList, ChatListSkeleton } from './chat-list';
 import { ChatCommunity } from './chat-community';
-import { sendChatMessage } from '../../lib/socket-service';
-import { useChat } from '@/hooks/use-chat';
+import { useRoom } from '@/lib/room/room-context';
 
 interface ChatProps {
   hostName: string;
@@ -35,7 +34,7 @@ export const Chat = ({
   const isHidden = !isChatEnabled;
 
   const [value, setValue] = useState('');
-  const { messages, send } = useChat(hostName);
+  const { messages, sendMessage } = useRoom();
 
   useEffect(() => {
     if (matches) {
@@ -48,10 +47,7 @@ export const Chat = ({
   }, [messages]);
 
   const onSubmit = () => {
-    if (!send) return;
-
-    sendChatMessage(hostName, value, viewerName);
-    send(value, viewerName);
+    sendMessage(value);
     setValue('');
   };
 

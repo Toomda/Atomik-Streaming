@@ -1,9 +1,9 @@
 'use client';
 
 // import { ReceivedChatMessage } from "@livekit/components-react";
-import { Message } from '@/hooks/use-chat';
 import { ChatMessage } from './chat-message';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ChatMessage as Message } from '@/lib/room/room-context';
 
 interface ChatListProps {
   messages: Message[];
