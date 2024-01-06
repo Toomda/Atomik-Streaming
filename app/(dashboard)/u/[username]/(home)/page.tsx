@@ -1,6 +1,8 @@
 import { StreamPlayer } from '@/components/stream-player';
 import { getUserByUsername } from '@/lib/user-service';
 import { currentUser } from '@/lib/auth';
+import { useEffect } from 'react';
+import { connectToSocketServer } from '../../../../../lib/socket-service';
 
 interface CreatorPageProps {
   params: {

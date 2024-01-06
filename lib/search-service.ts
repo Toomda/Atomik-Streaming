@@ -14,7 +14,7 @@ export const getSearch = async (term?: string) => {
   let response;
   try {
     response = await axios.get(
-      `http://localhost:5000/api/livestreams/search/${term}`,
+      `http://localhost:5000/api/stream/search/${term}`,
       {
         data: {
           uid: userId,

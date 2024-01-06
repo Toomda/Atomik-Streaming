@@ -3,7 +3,6 @@
 // import { onUnblock } from "@/actions/block";
 import { Button } from '@/components/ui/button';
 import { useTransition } from 'react';
-import { toast } from 'sonner';
 
 interface UnblockButtonProps {
   userId: string;

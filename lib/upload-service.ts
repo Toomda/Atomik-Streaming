@@ -39,7 +39,7 @@ export const uploadThumbnailByStreamId = async (
     formData.append('image', file);
 
     response = await axios.post(
-      `http://localhost:5000/api/livestreams/files/upload/${streamId}`,
+      `http://localhost:5000/api/stream/files/upload/${streamId}`,
       formData,
       {
         headers: {

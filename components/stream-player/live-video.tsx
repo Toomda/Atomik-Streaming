@@ -1,22 +1,26 @@
-"use client";
+'use client';
 
-import { Participant, Track } from "livekit-client";
-import { useRef, useState, useEffect } from "react";
-import { useEventListener } from "usehooks-ts";
+import { Participant, Track } from 'livekit-client';
+import { useRef, useState, useEffect } from 'react';
+import { useEventListener } from 'usehooks-ts';
 
-import { useTracks } from "@livekit/components-react";
-import { FullscreenControl } from "./fullscreen-control";
-import { VolumeControl } from "./volume-control";
+import { useTracks } from '@livekit/components-react';
+import { FullscreenControl } from './fullscreen-control';
+import { VolumeControl } from './volume-control';
+import Hls from 'hls.js';
 
 interface LiveVideoProps {
   participant: Participant;
+  username: string;
 }
 
-export const LiveVideo = ({ participant }: LiveVideoProps) => {
+export const LiveVideo = ({ participant, username }: LiveVideoProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [volume, setVolume] = useState(0);
+
+  const src = `http://localhost:5000/api/stream/receive/${username}/index.m3u8`;
 
   const onVolumeChange = (value: number) => {
     setVolume(+value);
@@ -46,7 +50,7 @@ export const LiveVideo = ({ participant }: LiveVideoProps) => {
     setIsFullscreen(isCurrentlyFullscreen);
   };
 
-  useEventListener("fullscreenchange", handleFullscreenChange, wrapperRef);
+  useEventListener('fullscreenchange', handleFullscreenChange, wrapperRef);
 
   const toggleFullscreen = () => {
     if (isFullscreen) {
@@ -64,9 +68,48 @@ export const LiveVideo = ({ participant }: LiveVideoProps) => {
       }
     });
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (Hls.isSupported() && video) {
+      const hls = new Hls({
+        enableWorker: true,
+        maxBufferLength: 1,
+        liveBackBufferLength: 0,
+        liveSyncDuration: 1,
+        liveMaxLatencyDuration: 5,
+        liveDurationInfinity: true,
+        highBufferWatchdogPeriod: 1,
+      });
+
+      hls.loadSource(src);
+      hls.attachMedia(video);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play().catch((e) => console.error('Error playing video!', e));
+      });
+
+      hls.on(Hls.Events.LEVEL_LOADED, (event, data) => {
+        if (data.details.live) {
+          video.currentTime = video.duration - 1;
+        }
+      });
+
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        if (data.fatal) {
+          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          }
+        }
+      });
+    } else if (video && video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.addEventListener('loadedmetadata', () => {
+        video.play().catch((e) => console.error('Error playing video:', e));
+      });
+    }
+  }, [src]);
+
   return (
     <div ref={wrapperRef} className="relative h-full flex">
-      <video ref={videoRef} width="100%" />
+      <video src={src} width={'100%'} ref={videoRef} />
       <div className="absolute top-0 h-full w-full opacity-0 hover:opacity-100 hover:transition-all">
         <div className="absolute bottom-0 flex h-14 w-full items-center justify-between bg-gradient-to-r from-neutral-900 px-4">
           <VolumeControl

@@ -1,7 +1,6 @@
 'use client';
 
 import { useViewerToken } from '@/hooks/use-viewer-token';
-import { Stream, User } from '@prisma/client';
 import { LiveKitRoom } from '@livekit/components-react';
 import { cn } from '@/lib/utils';
 import { Video, VideoSkeleton } from './video';
@@ -11,6 +10,8 @@ import { ChatToggle } from './chat-toggle';
 import { Header, HeaderSkeleton } from './header';
 import { InfoCard } from './info-card';
 import { AboutCard } from './about-card';
+import { useEffect } from 'react';
+import { connectToSocketServer } from '../../lib/socket-service';
 
 type CustomStream = {
   id: string;
@@ -66,7 +67,11 @@ export const StreamPlayer = ({
         )}
       >
         <div className="space-y-4 col-span-1 lg:col-span-2 xl:col-span-2 2xl:col-span-5 lg:overflow-y-auto hidden-scrollbar pb-10">
-          <Video hostName={user.username!} hostIdentity={user.id} />
+          <Video
+            hostName={user.username!}
+            hostIdentity={user.id}
+            isLive={stream.isLive}
+          />
           <Header
             hostName={user.username!}
             hostIdentity={user.id}

@@ -1,18 +1,14 @@
-"use client";
+'use client';
 
-import { ChatVariant, useChatSidebar } from "@/store/use-chat-sidebar";
-import {
-  useChat,
-  useConnectionState,
-  useRemoteParticipant,
-} from "@livekit/components-react";
-import { ConnectionState } from "livekit-client";
-import { useEffect, useMemo, useState } from "react";
-import { useMediaQuery } from "usehooks-ts";
-import { ChatHeader, ChatHeaderSkeleton } from "./chat-header";
-import { ChatForm, ChatFormSkeleton } from "./chat-form";
-import { ChatList, ChatListSkeleton } from "./chat-list";
-import { ChatCommunity } from "./chat-community";
+import { ChatVariant, useChatSidebar } from '@/store/use-chat-sidebar';
+import { useEffect, useMemo, useState } from 'react';
+import { useMediaQuery } from 'usehooks-ts';
+import { ChatHeader, ChatHeaderSkeleton } from './chat-header';
+import { ChatForm, ChatFormSkeleton } from './chat-form';
+import { ChatList, ChatListSkeleton } from './chat-list';
+import { ChatCommunity } from './chat-community';
+import { sendChatMessage } from '../../lib/socket-service';
+import { useChat } from '@/hooks/use-chat';
 
 interface ChatProps {
   hostName: string;
@@ -35,15 +31,11 @@ export const Chat = ({
 }: ChatProps) => {
   const matches = useMediaQuery(`(max-width: 1024px)`);
   const { variant, onExpand } = useChatSidebar((state) => state);
-  const connectionState = useConnectionState();
-  const participant = useRemoteParticipant(hostIdentity);
 
-  const isOnline = participant && connectionState === ConnectionState.Connected;
+  const isHidden = !isChatEnabled;
 
-  const isHidden = !isChatEnabled || !isOnline;
-
-  const [value, setValue] = useState("");
-  const { chatMessages: messages, send } = useChat();
+  const [value, setValue] = useState('');
+  const { messages, send } = useChat(hostName);
 
   useEffect(() => {
     if (matches) {
@@ -58,8 +50,9 @@ export const Chat = ({
   const onSubmit = () => {
     if (!send) return;
 
-    send(value);
-    setValue("");
+    sendChatMessage(hostName, value, viewerName);
+    send(value, viewerName);
+    setValue('');
   };
 
   const onChange = (value: string) => {

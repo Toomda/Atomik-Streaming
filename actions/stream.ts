@@ -12,7 +12,7 @@ export const updateStream = async (values: Partial<Stream>) => {
   let response;
   response = await axios
     .post(
-      `http://localhost:5000/api/livestreams/${self.id}`,
+      `http://localhost:5000/api/stream/${self.id}`,
       {
         thumbnail: values.thumbnail,
         name: values.name,

@@ -1,11 +1,12 @@
-"use client";
+'use client';
 
-import { ReceivedChatMessage } from "@livekit/components-react";
-import { ChatMessage } from "./chat-message";
-import { Skeleton } from "@/components/ui/skeleton";
+// import { ReceivedChatMessage } from "@livekit/components-react";
+import { Message } from '@/hooks/use-chat';
+import { ChatMessage } from './chat-message';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ChatListProps {
-  messages: ReceivedChatMessage[];
+  messages: Message[];
   isHidden: boolean;
 }
 
@@ -14,7 +15,7 @@ export const ChatList = ({ messages, isHidden }: ChatListProps) => {
     return (
       <div className="flex flex-1 items-center justify-center">
         <p className="text-sm text-muted-foreground">
-          {isHidden ? "Chat is disabled" : "Welcome to the Chat!"}
+          {isHidden ? 'Chat is disabled' : 'Welcome to the Chat!'}
         </p>
       </div>
     );

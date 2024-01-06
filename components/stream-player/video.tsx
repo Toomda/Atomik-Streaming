@@ -1,22 +1,23 @@
-"use client";
+'use client';
 
-import { ConnectionState, Track } from "livekit-client";
+import { ConnectionState, Track } from 'livekit-client';
 import {
   useConnectionState,
   useRemoteParticipant,
   useTracks,
-} from "@livekit/components-react";
-import { OfflineVideo } from "./offline-video";
-import { LoadingVideo } from "./loading-video";
-import { LiveVideo } from "./live-video";
-import { Skeleton } from "@/components/ui/skeleton";
+} from '@livekit/components-react';
+import { OfflineVideo } from './offline-video';
+import { LoadingVideo } from './loading-video';
+import { LiveVideo } from './live-video';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface VideoProps {
   hostName: string;
   hostIdentity: string;
+  isLive: boolean;
 }
 
-export const Video = ({ hostName, hostIdentity }: VideoProps) => {
+export const Video = ({ hostName, hostIdentity, isLive }: VideoProps) => {
   const connectionState = useConnectionState();
   const participant = useRemoteParticipant(hostIdentity);
   const tracks = useTracks([
@@ -26,13 +27,18 @@ export const Video = ({ hostName, hostIdentity }: VideoProps) => {
 
   let content;
 
-  if (!participant && connectionState === ConnectionState.Connected) {
-    content = <OfflineVideo username={hostName} />;
-  } else if (!participant || tracks.length === 0) {
-    content = <LoadingVideo label={connectionState} />;
+  // if (!participant && connectionState === ConnectionState.Connected) {
+  //   content = <OfflineVideo username={hostName} />;
+  // } else if (!participant || tracks.length === 0) {
+  //   content = <LoadingVideo label={connectionState} />;
+  // } else {
+  if (isLive) {
+    content = <LiveVideo participant={participant!} username={hostName} />;
   } else {
-    content = <LiveVideo participant={participant} />;
+    content = <OfflineVideo username={hostName} />;
   }
+
+  // }
   return <div className="aspect-video border-b group relative">{content}</div>;
 };
 

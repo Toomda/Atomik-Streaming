@@ -12,7 +12,7 @@ export const getStreams = async () => {
 
   let response;
   try {
-    response = await axios.get('http://localhost:5000/api/livestreams/', {
+    response = await axios.get('http://localhost:5000/api/stream/', {
       data: {
         uid: userId,
       },
