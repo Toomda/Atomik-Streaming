@@ -1,12 +1,12 @@
 import { UrlCard } from './_components/url-card';
 import { getSelf } from '@/lib/auth-service';
-import { getStreamByUserId } from '@/lib/stream-service';
+import { getStreamKeyByUserId } from '@/lib/stream-service';
 import { KeyCard } from './_components/key-card';
 import { ConnectModal } from './_components/connect-modal';
 
 const KeysPage = async () => {
   const self = await getSelf();
-  const stream = await getStreamByUserId(self.id);
+  const stream = await getStreamKeyByUserId(self.id);
 
   if (!stream) {
     throw new Error('Stream not found');

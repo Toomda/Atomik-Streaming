@@ -12,13 +12,11 @@ interface CommunityItemProps {
   hostName: string;
   viewerName: string;
   participantName?: string;
-  participantIdentity: string;
 }
 
 export const CommunityItem = ({
   hostName,
   viewerName,
-  participantIdentity,
   participantName,
 }: CommunityItemProps) => {
   const color = stringToColor(participantName || '');

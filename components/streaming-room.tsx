@@ -1,6 +1,4 @@
-import { cn } from '@/lib/utils';
-import { RoomProvider } from '../lib/room/room-context';
-import { useMemo } from 'react';
+import { RoomProvider } from '../context/room-context';
 
 interface StreamingRoomProps {
   classNames?: string;

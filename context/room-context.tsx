@@ -1,18 +1,16 @@
 import React, {
   createContext,
-  useContext,
   useState,
   useEffect,
   useMemo,
   useRef,
-  useCallback,
 } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { useAuth } from '../auth';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 interface Participant {
   username: string;
+  image?: string;
 }
 
 interface Room {
@@ -55,7 +53,7 @@ export const RoomProvider = ({
 
   useEffect(() => {
     const fetchRoomInfo = async () => {
-      let response;
+      let response: AxiosResponse;
       try {
         response = await axios.get(
           `http://localhost:5000/api/room/${hostNameRef.current}`
@@ -64,6 +62,16 @@ export const RoomProvider = ({
         throw new Error('Could not get Room info');
       }
 
+      setRemoteViewer((prev) => {
+        const newViewer = response.data.viewer.map((viewer: any) => {
+          if (!prev.find((rv) => rv.username === viewer.username)) {
+            return viewer;
+          }
+        });
+
+        return [...prev, ...newViewer].filter((x) => x !== undefined);
+      });
+      setMessages(response.data.messages);
       setIsLive(response.data.isLive);
     };
     fetchRoomInfo();
@@ -78,7 +86,11 @@ export const RoomProvider = ({
     };
 
     const handleChatMessage = (message: ChatMessage) => {
-      setMessages((prev) => [...prev, message]);
+      setMessages((prev) => {
+        if (prev.length === 50) prev.pop();
+
+        return [...prev, message];
+      });
     };
 
     const handleViewerJoined = (viewer: Participant) => {
@@ -154,7 +166,7 @@ export function useRoom() {
   const context = React.useContext(RoomContext);
   if (!context) {
     throw Error(
-      'tried to access room context outside of livekit room component'
+      'tried to access room context outside of StreamingRoom component'
     );
   }
   return context;

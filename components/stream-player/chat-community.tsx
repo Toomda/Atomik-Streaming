@@ -1,12 +1,11 @@
-"use client";
+'use client';
 
-import { useParticipants } from "@livekit/components-react";
-import { useMemo, useState } from "react";
-import { useDebounce } from "usehooks-ts";
-import { Input } from "../ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { CommunityItem } from "./community-item";
-import { LocalParticipant, RemoteParticipant } from "livekit-client";
+import { useMemo, useState } from 'react';
+import { useDebounce } from 'usehooks-ts';
+import { Input } from '../ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { CommunityItem } from './community-item';
+import { useRoom } from '../../context/room-context';
 
 interface ChatCommunityProps {
   hostName: string;
@@ -19,29 +18,30 @@ export const ChatCommunity = ({
   viewerName,
   isHidden,
 }: ChatCommunityProps) => {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState('');
   const debouncedValue = useDebounce<string>(value, 500);
-  const participants = useParticipants();
+  // const participants = useParticipants();
+  const { remoteViewer } = useRoom();
 
   const onChange = (newValue: string) => {
     setValue(newValue);
   };
 
-  const filteredParticipants = useMemo(() => {
-    const deduped = participants.reduce((acc, participant) => {
-      const hostAsViewer = `host-${participant.identity}`;
-      if (!acc.some((p) => p.identity === hostAsViewer)) {
-        acc.push(participant);
-      }
-      return acc;
-    }, [] as (RemoteParticipant | LocalParticipant)[]);
+  // const filteredParticipants = useMemo(() => {
+  //   const deduped = participants.reduce((acc, participant) => {
+  //     const hostAsViewer = `host-${participant.identity}`;
+  //     if (!acc.some((p) => p.identity === hostAsViewer)) {
+  //       acc.push(participant);
+  //     }
+  //     return acc;
+  //   }, [] as (RemoteParticipant | LocalParticipant)[]);
 
-    return deduped.filter((participant) => {
-      return participant.name
-        ?.toLowerCase()
-        .includes(debouncedValue.toLowerCase());
-    });
-  }, [participants, debouncedValue]);
+  //   return deduped.filter((participant) => {
+  //     return participant.name
+  //       ?.toLowerCase()
+  //       .includes(debouncedValue.toLowerCase());
+  //   });
+  // }, [participants, debouncedValue]);
 
   if (isHidden) {
     return (
@@ -62,13 +62,12 @@ export const ChatCommunity = ({
         <p className="text-center text-sm text-muted-foreground hidden last:block p-2">
           No results
         </p>
-        {filteredParticipants.map((participant) => (
+        {remoteViewer.map((viewer) => (
           <CommunityItem
-            key={participant.identity}
+            key={viewer.username}
             hostName={hostName}
             viewerName={viewerName}
-            participantName={participant.name}
-            participantIdentity={participant.identity}
+            participantName={viewer.username}
           />
         ))}
       </ScrollArea>

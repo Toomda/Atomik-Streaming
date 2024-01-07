@@ -1,14 +1,11 @@
-"use client";
+'use client';
 
-import { UserAvatar, UserAvatarSkeleton } from "@/components/user-avatar";
-import { VerifiedMark } from "@/components/verified-mark";
-import {
-  useParticipants,
-  useRemoteParticipant,
-} from "@livekit/components-react";
-import { UserIcon } from "lucide-react";
-import { Actions, ActionsSkeleton } from "./actions";
-import { Skeleton } from "@/components/ui/skeleton";
+import { UserAvatar, UserAvatarSkeleton } from '@/components/user-avatar';
+import { VerifiedMark } from '@/components/verified-mark';
+import { UserIcon } from 'lucide-react';
+import { Actions, ActionsSkeleton } from './actions';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useRoom } from '../../context/room-context';
 
 interface HeaderProps {
   hostName: string;
@@ -27,11 +24,9 @@ export const Header = ({
   name,
   viewerIdentity,
 }: HeaderProps) => {
-  const participants = useParticipants();
-  const participant = useRemoteParticipant(hostIdentity);
+  const { remoteViewer, isLive } = useRoom();
 
-  const isLive = !!participant;
-  const participantCount = participants.length - 1;
+  const participantCount = remoteViewer.length;
 
   const hostAsViewer = `host-${hostIdentity}`;
   const isHost = viewerIdentity === hostAsViewer;
@@ -56,8 +51,8 @@ export const Header = ({
             <div className="font-semibold flex gap-x-1 items-center text-xs text-rose-500">
               <UserIcon className="h-4 w-4" />
               <p>
-                {participantCount}{" "}
-                {participantCount === 1 ? "viewer" : "viewers"}
+                {participantCount}{' '}
+                {participantCount === 1 ? 'viewer' : 'viewers'}
               </p>
             </div>
           ) : (

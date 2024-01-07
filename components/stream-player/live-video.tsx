@@ -1,24 +1,23 @@
 'use client';
 
-import { Participant, Track } from 'livekit-client';
 import { useRef, useState, useEffect } from 'react';
 import { useEventListener } from 'usehooks-ts';
 
-import { useTracks } from '@livekit/components-react';
 import { FullscreenControl } from './fullscreen-control';
 import { VolumeControl } from './volume-control';
 import Hls from 'hls.js';
+import { LoadingVideo } from './loading-video';
 
 interface LiveVideoProps {
-  participant: Participant;
   username: string;
 }
 
-export const LiveVideo = ({ participant, username }: LiveVideoProps) => {
+export const LiveVideo = ({ username }: LiveVideoProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [volume, setVolume] = useState(0);
+  const [manifestParsed, setManifestParsed] = useState(false);
 
   const src = `http://localhost:5000/api/stream/receive/${username}/index.m3u8`;
 
@@ -60,14 +59,6 @@ export const LiveVideo = ({ participant, username }: LiveVideoProps) => {
     }
   };
 
-  useTracks([Track.Source.Camera, Track.Source.Microphone])
-    .filter((track) => track.participant.identity === participant.identity)
-    .forEach((track) => {
-      if (videoRef.current) {
-        track.publication.track?.attach(videoRef.current);
-      }
-    });
-
   useEffect(() => {
     const video = videoRef.current;
     if (Hls.isSupported() && video) {
@@ -84,7 +75,10 @@ export const LiveVideo = ({ participant, username }: LiveVideoProps) => {
       hls.loadSource(src);
       hls.attachMedia(video);
 
+      console.log('Registering manifest parsed event');
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        setManifestParsed(true);
+        console.log('manifest parsed');
         video.play().catch((e) => console.error('Error playing video!', e));
       });
 
@@ -95,6 +89,7 @@ export const LiveVideo = ({ participant, username }: LiveVideoProps) => {
       });
 
       hls.on(Hls.Events.ERROR, (event, data) => {
+        setManifestParsed(false);
         if (data.fatal) {
           if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
           }
@@ -108,7 +103,11 @@ export const LiveVideo = ({ participant, username }: LiveVideoProps) => {
   }, [src]);
 
   return (
-    <div ref={wrapperRef} className="relative h-full flex">
+    <div
+      ref={wrapperRef}
+      className="relative h-full flex"
+      onDoubleClick={toggleFullscreen}
+    >
       <video src={src} width={'100%'} ref={videoRef} />
       <div className="absolute top-0 h-full w-full opacity-0 hover:opacity-100 hover:transition-all">
         <div className="absolute bottom-0 flex h-14 w-full items-center justify-between bg-gradient-to-r from-neutral-900 px-4">

@@ -7,7 +7,7 @@ import { ChatHeader, ChatHeaderSkeleton } from './chat-header';
 import { ChatForm, ChatFormSkeleton } from './chat-form';
 import { ChatList, ChatListSkeleton } from './chat-list';
 import { ChatCommunity } from './chat-community';
-import { useRoom } from '@/lib/room/room-context';
+import { useRoom } from '../../context/room-context';
 
 interface ChatProps {
   hostName: string;

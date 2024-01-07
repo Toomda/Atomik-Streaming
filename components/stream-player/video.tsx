@@ -1,43 +1,28 @@
 'use client';
 
-import { ConnectionState, Track } from 'livekit-client';
-import {
-  useConnectionState,
-  useRemoteParticipant,
-  useTracks,
-} from '@livekit/components-react';
 import { OfflineVideo } from './offline-video';
 import { LoadingVideo } from './loading-video';
 import { LiveVideo } from './live-video';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useRoom } from '@/lib/room/room-context';
+import { useRoom } from '@/context/room-context';
+import { useState } from 'react';
 
 interface VideoProps {
   hostName: string;
-  hostIdentity: string;
 }
 
-export const Video = ({ hostName, hostIdentity }: VideoProps) => {
-  const connectionState = useConnectionState();
-  const participant = useRemoteParticipant(hostIdentity);
-  const tracks = useTracks([
-    Track.Source.Camera,
-    Track.Source.Microphone,
-  ]).filter((track) => track.participant.identity === hostIdentity);
-
+export const Video = ({ hostName }: VideoProps) => {
   const { isLive, remoteViewer } = useRoom();
-
-  console.log(remoteViewer);
 
   let content;
 
   // if (!participant && connectionState === ConnectionState.Connected) {
   //   content = <OfflineVideo username={hostName} />;
   // } else if (!participant || tracks.length === 0) {
-  //   content = <LoadingVideo label={connectionState} />;
+  //
   // } else {
   if (isLive) {
-    content = <LiveVideo participant={participant!} username={hostName} />;
+    content = <LiveVideo username={hostName} />;
   } else {
     content = <OfflineVideo username={hostName} />;
   }

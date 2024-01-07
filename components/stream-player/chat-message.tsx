@@ -1,6 +1,6 @@
 'use client';
 import { stringToColor } from '@/lib/utils';
-import { ChatMessage as Message } from '@/lib/room/room-context';
+import { ChatMessage as Message } from '@/context/room-context';
 import { format } from 'date-fns';
 
 interface ChatMessageProps {

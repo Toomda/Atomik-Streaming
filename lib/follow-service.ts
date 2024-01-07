@@ -33,7 +33,6 @@ export const isFollowingUser = async (id: string) => {
       },
     });
   } catch (error) {
-    console.log(error);
     return false;
   }
   return response.status === 200;
