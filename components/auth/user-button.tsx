@@ -12,7 +12,7 @@ import { signOut } from '@/next-auth';
 import { LogOut } from 'lucide-react';
 import { SettingsModal } from './settings-modal';
 import { DeleteModal } from './delete-modal';
-import { getUserById } from '@/lib/user-service';
+import { getUserById } from '@/actions/user';
 
 export const UserButton = async ({ props }: any) => {
   const self = await getSelf();

@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useTransition, useRef, ElementRef } from 'react';
+import { useTransition, useRef, ElementRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { IngressInput } from 'livekit-server-sdk';
 import { createIngress } from '@/actions/ingress';
 
 import {
@@ -25,15 +24,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-const RTMP = String(IngressInput.RTMP_INPUT);
-const WHIP = String(IngressInput.WHIP_INPUT);
-
-type IngressType = typeof RTMP | typeof WHIP;
-
 export const ConnectModal = () => {
   const closeRef = useRef<ElementRef<'button'>>(null);
   const [isPending, startTransition] = useTransition();
-  const [ingressType, setIngressType] = useState<IngressType>(RTMP);
 
   const onSubmit = () => {
     startTransition(() => {
@@ -57,13 +50,13 @@ export const ConnectModal = () => {
         </DialogHeader>
         <Select
           disabled={isPending}
-          value={ingressType}
-          onValueChange={(value) => setIngressType(value)}
+          value={'RTMP'}
+          onValueChange={(value) => {}}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Ingress Type" />
             <SelectContent>
-              <SelectItem value={RTMP}>RTMP</SelectItem>
+              <SelectItem value={'RTMP'}>RTMP</SelectItem>
               {/* <SelectItem value={WHIP}>WHIP</SelectItem> */}
             </SelectContent>
           </SelectTrigger>

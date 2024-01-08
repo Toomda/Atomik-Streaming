@@ -5,11 +5,11 @@ import { useDebounce } from 'usehooks-ts';
 import { Input } from '../ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { CommunityItem } from './community-item';
-import { useRoom } from '../../context/room-context';
+import { useRoom } from '@/context/room-context';
 
 interface ChatCommunityProps {
   hostName: string;
-  viewerName: string;
+  viewerName?: string;
   isHidden: boolean;
 }
 

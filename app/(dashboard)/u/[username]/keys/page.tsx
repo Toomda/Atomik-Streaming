@@ -1,6 +1,6 @@
 import { UrlCard } from './_components/url-card';
 import { getSelf } from '@/lib/auth-service';
-import { getStreamKeyByUserId } from '@/lib/stream-service';
+import { getStreamKeyByUserId } from '@/actions/stream';
 import { KeyCard } from './_components/key-card';
 import { ConnectModal } from './_components/connect-modal';
 

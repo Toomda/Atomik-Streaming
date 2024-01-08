@@ -5,7 +5,7 @@ import { VerifiedMark } from '@/components/verified-mark';
 import { UserIcon } from 'lucide-react';
 import { Actions, ActionsSkeleton } from './actions';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useRoom } from '../../context/room-context';
+import { useRoom } from '@/context/room-context';
 
 interface HeaderProps {
   hostName: string;
@@ -24,9 +24,9 @@ export const Header = ({
   name,
   viewerIdentity,
 }: HeaderProps) => {
-  const { remoteViewer, isLive } = useRoom();
+  const { remoteViewer, isLive, guestViewer } = useRoom();
 
-  const participantCount = remoteViewer.length;
+  const participantCount = remoteViewer.length + guestViewer;
 
   const hostAsViewer = `host-${hostIdentity}`;
   const isHost = viewerIdentity === hostAsViewer;

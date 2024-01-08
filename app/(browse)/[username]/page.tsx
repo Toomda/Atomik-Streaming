@@ -1,5 +1,5 @@
-import { isFollowingUser } from '@/lib/follow-service';
-import { getUserByUsername } from '@/lib/user-service';
+import { isFollowingUser } from '@/actions/follow';
+import { getUserByUsername } from '@/actions/user';
 import { notFound } from 'next/navigation';
 import { StreamPlayer } from '@/components/stream-player';
 

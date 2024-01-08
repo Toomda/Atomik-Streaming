@@ -1,5 +1,5 @@
 import { StreamPlayer } from '@/components/stream-player';
-import { getUserByUsername } from '@/lib/user-service';
+import { getUserByUsername } from '@/actions/user';
 import { currentUser } from '@/lib/auth';
 
 interface CreatorPageProps {

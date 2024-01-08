@@ -1,10 +1,10 @@
-import { RoomProvider } from '../context/room-context';
+import { RoomProvider } from '@/context/room-context';
 
 interface StreamingRoomProps {
   classNames?: string;
   children: React.ReactNode;
   hostName: string;
-  localViewerName: string;
+  localViewerName?: string;
 }
 
 export const StreamingRoom = ({

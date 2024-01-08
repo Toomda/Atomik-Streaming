@@ -39,3 +39,82 @@ export const updateStream = async (values: Partial<Stream>) => {
 
   return response.data.stream;
 };
+
+export const getStreamKeyByUserId = async (userId: string) => {
+  const self = await getSelf();
+
+  let response;
+  try {
+    response = await axios.get(
+      `http://localhost:5000/api/streamkey/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${self.token}`,
+        },
+      }
+    );
+  } catch (error) {
+    throw new Error(`Could not get Streamkey for userId ${userId}`);
+  }
+
+  return response.data.stream;
+};
+
+export const getStreamByUserId = async (userId: string) => {
+  let response;
+  try {
+    response = await axios.get(`http://localhost:5000/api/stream/${userId}`);
+  } catch (error) {
+    throw new Error(`Could not get Livestream for userId ${userId}`);
+  }
+
+  return response.data.stream;
+};
+
+export const getStreams = async () => {
+  let userId;
+  try {
+    const self = await getSelf();
+    userId = self.id;
+  } catch (error) {
+    userId = null;
+  }
+
+  let response;
+  try {
+    response = await axios.get('http://localhost:5000/api/stream/', {
+      data: {
+        uid: userId,
+      },
+    });
+  } catch (error) {
+    throw new Error('Error while retrieving Streams');
+  }
+
+  return response.data.streams;
+};
+
+export const getRecommended = async () => {
+  let userId;
+
+  try {
+    const self = await getSelf();
+    userId = self.id;
+  } catch {
+    userId = null;
+  }
+
+  let response;
+  try {
+    response = await axios.get('http://localhost:5000/api/user/recommended', {
+      data: {
+        uid: userId,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error('Error while getting recommended Users');
+  }
+
+  return response.data.users;
+};

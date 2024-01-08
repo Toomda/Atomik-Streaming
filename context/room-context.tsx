@@ -9,7 +9,7 @@ import { io, Socket } from 'socket.io-client';
 import axios, { AxiosResponse } from 'axios';
 
 interface Participant {
-  username: string;
+  username?: string;
   image?: string;
 }
 
@@ -19,13 +19,14 @@ interface Room {
   localViewer: Participant;
   isLive: boolean;
   messages: ChatMessage[];
+  guestViewer: number;
   sendMessage: (message: string) => void;
 }
 
 interface RoomProviderProps {
   children: React.ReactNode;
   initialHostName: string;
-  initialLocalViewerName: string;
+  initialLocalViewerName?: string;
 }
 
 export interface ChatMessage {
@@ -43,11 +44,12 @@ export const RoomProvider = ({
 }: RoomProviderProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [remoteViewer, setRemoteViewer] = useState<Participant[]>([]);
+  const [guestViewer, setGuestViewer] = useState(0);
   const [isLive, setIsLive] = useState(false);
   const hostNameRef = useRef(initialHostName);
   const localViewerNameRef = useRef(initialLocalViewerName);
 
-  const socket = useMemo(() => {
+  const socket: Socket = useMemo(() => {
     return io('http://localhost:5000/');
   }, []);
 
@@ -73,6 +75,7 @@ export const RoomProvider = ({
       });
       setMessages(response.data.messages);
       setIsLive(response.data.isLive);
+      setGuestViewer(response.data.guestViewer);
     };
     fetchRoomInfo();
   }, []);
@@ -94,6 +97,10 @@ export const RoomProvider = ({
     };
 
     const handleViewerJoined = (viewer: Participant) => {
+      if (!viewer.username) {
+        setGuestViewer((prev) => prev + 1);
+        return;
+      }
       setRemoteViewer((prev) => {
         if (prev.find((rv) => rv.username === viewer.username)) {
           return prev;
@@ -103,6 +110,10 @@ export const RoomProvider = ({
     };
 
     const handleViewerLeft = (viewer: Participant) => {
+      if (!viewer.username) {
+        setGuestViewer((prev) => prev - 1);
+        return;
+      }
       setRemoteViewer((prev) =>
         prev.filter((rv) => rv.username !== viewer.username)
       );
@@ -155,6 +166,7 @@ export const RoomProvider = ({
         localViewer: { username: localViewerNameRef.current || 'Guest' },
         isLive,
         remoteViewer,
+        guestViewer,
       }}
     >
       {children}

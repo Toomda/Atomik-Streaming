@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState, useTransition, useRef, ElementRef } from 'react';
-import { updateUser } from '../../actions/user';
+import { updateUser } from '@/actions/user';
 import { toast } from 'sonner';
 import { Settings, Trash } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';

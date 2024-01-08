@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Hint } from '@/components/hint';
 import { Textarea } from '@/components/ui/textarea';
 import { useState, useTransition, useRef, ElementRef } from 'react';
-import { updateUser } from '../../actions/user';
+import { updateUser } from '@/actions/user';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
