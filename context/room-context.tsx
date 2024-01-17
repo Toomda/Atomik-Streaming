@@ -1,3 +1,5 @@
+'use client';
+
 import React, {
   createContext,
   useState,
@@ -48,12 +50,54 @@ export const RoomProvider = ({
   const [isLive, setIsLive] = useState(false);
   const hostNameRef = useRef(initialHostName);
   const localViewerNameRef = useRef(initialLocalViewerName);
-
-  const socket: Socket = useMemo(() => {
-    return io('http://localhost:5000/');
-  }, []);
+  const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
+    const disconnectChat = () => {
+      socketRef.current!.emit('disconnectChat', {
+        hostName: hostNameRef.current,
+        viewerName: localViewerNameRef.current,
+      });
+    };
+
+    const handleChatMessage = (message: ChatMessage) => {
+      setMessages((prev) => {
+        if (prev.length === 50) prev.pop();
+
+        return [...prev, message];
+      });
+    };
+
+    const handleViewerJoined = (viewer: Participant) => {
+      if (viewer.username === localViewerNameRef.current) return;
+      if (!viewer.username) {
+        setGuestViewer((prev) => prev + 1);
+        return;
+      }
+      setRemoteViewer((prev) => {
+        if (prev.find((rv) => rv.username === viewer.username)) {
+          return prev;
+        }
+        return [...prev, viewer];
+      });
+    };
+
+    const handleViewerLeft = (viewer: Participant) => {
+      console.log('Handle viewer left');
+      if (!viewer.username) {
+        setGuestViewer((prev) => prev - 1);
+        return;
+      }
+      setRemoteViewer((prev) =>
+        prev.filter((rv) => rv.username !== viewer.username)
+      );
+    };
+
+    const handleLiveStatus = (isLive: boolean) => {
+      console.log('Got Live status change');
+      setIsLive(isLive);
+    };
+
     const fetchRoomInfo = async () => {
       let response: AxiosResponse;
       try {
@@ -77,80 +121,43 @@ export const RoomProvider = ({
       setIsLive(response.data.isLive);
       setGuestViewer(response.data.guestViewer);
     };
-    fetchRoomInfo();
-  }, []);
 
-  useEffect(() => {
-    const disconnectChat = () => {
-      socket.emit('disconnectChat', {
-        hostName: hostNameRef.current,
-        viewerName: localViewerNameRef.current,
-      });
-    };
+    if (!socketRef.current) {
+      socketRef.current = io('http://localhost:5000/');
 
-    const handleChatMessage = (message: ChatMessage) => {
-      setMessages((prev) => {
-        if (prev.length === 50) prev.pop();
+      socketRef.current.on('chat-message', handleChatMessage);
 
-        return [...prev, message];
-      });
-    };
+      socketRef.current.on('viewer-joined', handleViewerJoined);
 
-    const handleViewerJoined = (viewer: Participant) => {
-      if (!viewer.username) {
-        setGuestViewer((prev) => prev + 1);
-        return;
-      }
-      setRemoteViewer((prev) => {
-        if (prev.find((rv) => rv.username === viewer.username)) {
-          return prev;
-        }
-        return [...prev, viewer];
-      });
-    };
+      socketRef.current.on('viewer-left', handleViewerLeft);
 
-    const handleViewerLeft = (viewer: Participant) => {
-      if (!viewer.username) {
-        setGuestViewer((prev) => prev - 1);
-        return;
-      }
-      setRemoteViewer((prev) =>
-        prev.filter((rv) => rv.username !== viewer.username)
-      );
-    };
+      socketRef.current.on('live-status', handleLiveStatus);
 
-    const handleLiveStatus = (isLive: boolean) => {
-      console.log('Got Live status change');
-      setIsLive(isLive);
-    };
+      window.addEventListener('beforeunload', disconnectChat);
+    }
 
-    socket.on('chat-message', handleChatMessage);
-
-    socket.on('viewer-joined', handleViewerJoined);
-
-    socket.on('viewer-left', handleViewerLeft);
-
-    socket.on('live-status', handleLiveStatus);
-
-    window.addEventListener('beforeunload', disconnectChat);
-
-    socket.emit('room-join', {
+    socketRef.current.emit('room-join', {
       hostName: hostNameRef.current,
       viewerName: localViewerNameRef.current,
     });
 
+    fetchRoomInfo();
+
     return () => {
-      window.removeEventListener('beforeunload', disconnectChat);
-      socket.off('chat-message', handleChatMessage);
-      socket.off('viewer-joined', handleViewerJoined);
-      socket.off('viewer-left', handleViewerLeft);
-      socket.off('live-status', handleLiveStatus);
-      disconnectChat();
+      if (socketRef.current) {
+        disconnectChat();
+        window.removeEventListener('beforeunload', disconnectChat);
+        socketRef.current.off('chat-message', handleChatMessage);
+        socketRef.current.off('viewer-joined', handleViewerJoined);
+        socketRef.current.off('viewer-left', handleViewerLeft);
+        socketRef.current.off('live-status', handleLiveStatus);
+      }
     };
-  }, [socket, localViewerNameRef, hostNameRef]);
+  }, []);
 
   const sendMessage = (message: string) => {
-    socket.emit('chat-message', {
+    console.log(message);
+    socketRef.current!.emit('chat-message', {
       toChannel: hostNameRef.current,
       message: message,
       author: localViewerNameRef.current,
@@ -163,7 +170,7 @@ export const RoomProvider = ({
         messages,
         sendMessage,
         hostName: hostNameRef.current,
-        localViewer: { username: localViewerNameRef.current || 'Guest' },
+        localViewer: { username: localViewerNameRef.current },
         isLive,
         remoteViewer,
         guestViewer,

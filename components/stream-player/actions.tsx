@@ -61,7 +61,7 @@ export const Actions = ({
 
   return (
     <Button
-      disabled={isPending || isHost}
+      disabled={isPending || isHost || !user}
       onClick={toggleFollow}
       variant="primary"
       size="sm"

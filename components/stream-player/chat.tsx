@@ -8,6 +8,7 @@ import { ChatForm, ChatFormSkeleton } from './chat-form';
 import { ChatList, ChatListSkeleton } from './chat-list';
 import { ChatCommunity } from './chat-community';
 import { useRoom } from '@/context/room-context';
+import { useAuth } from '@/lib/auth';
 
 interface ChatProps {
   hostName: string;
@@ -33,6 +34,7 @@ export const Chat = ({
 
   const isHidden = !isChatEnabled;
 
+  const user = useAuth();
   const [value, setValue] = useState('');
   const { messages, sendMessage } = useRoom();
 
@@ -47,6 +49,7 @@ export const Chat = ({
   }, [messages]);
 
   const onSubmit = () => {
+    console.log(user);
     sendMessage(value);
     setValue('');
   };

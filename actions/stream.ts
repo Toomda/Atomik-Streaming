@@ -1,10 +1,10 @@
-'use server';
+"use server";
 
-import { revalidatePath } from 'next/cache';
-import { Stream } from '@prisma/client';
+import { revalidatePath } from "next/cache";
+import { Stream } from "@prisma/client";
 
-import { getSelf } from '@/lib/auth-service';
-import axios from 'axios';
+import { getSelf } from "@/lib/auth-service";
+import axios from "axios";
 
 export const updateStream = async (values: Partial<Stream>) => {
   const self = await getSelf();
@@ -82,13 +82,13 @@ export const getStreams = async () => {
 
   let response;
   try {
-    response = await axios.get('http://localhost:5000/api/stream/', {
+    response = await axios.get("http://localhost:5000/api/stream/", {
       data: {
         uid: userId,
       },
     });
   } catch (error) {
-    throw new Error('Error while retrieving Streams');
+    throw new Error("Error while retrieving Streams");
   }
 
   return response.data.streams;
@@ -106,15 +106,41 @@ export const getRecommended = async () => {
 
   let response;
   try {
-    response = await axios.get('http://localhost:5000/api/user/recommended', {
+    response = await axios.get("http://localhost:5000/api/user/recommended", {
       data: {
         uid: userId,
       },
     });
   } catch (error) {
     console.log(error);
-    throw new Error('Error while getting recommended Users');
+    throw new Error("Error while getting recommended Users");
   }
 
   return response.data.users;
+};
+
+export const getFollowedStreams = async () => {
+  let self;
+  try {
+    self = await getSelf();
+  } catch {
+    throw new Error("Must be logged in!");
+  }
+
+  let response;
+  try {
+    response = await axios.get(
+      "http://localhost:5000/api/stream/followed/all",
+      {
+        headers: {
+          Authorization: `Bearer ${self.token}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error while getting recommended Users");
+  }
+
+  return response.data.streams;
 };

@@ -1,7 +1,7 @@
-import Image from 'next/image';
-import { UserAvatar } from './user-avatar';
-import { Skeleton } from '@/components/ui/skeleton';
-import { LiveBadge } from './live-badge';
+import Image from "next/image";
+import { UserAvatar } from "./user-avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { LiveBadge } from "./live-badge";
 
 interface ThumbnailProps {
   src: string | null;
@@ -19,7 +19,7 @@ export const Thumbnail = ({
   let content;
   if (!src) {
     content = (
-      <div className="bg-background flex flex-col items-center justify-center gap-y-4 h-full w-full transition-transform group-hover:translate-x-2 group-hover:-translate-y-2 rounded-md">
+      <div className="bg-background flex flex-col items-center justify-center gap-y-4 w-full h-full transition-transform group-hover:translate-x-2 group-hover:-translate-y-2 rounded-md">
         <UserAvatar
           imageUrl={fallback}
           size="lg"
@@ -35,19 +35,27 @@ export const Thumbnail = ({
         src={`http://localhost:5000/api/${src}`}
         fill
         alt="Thumbnail"
-        className="object-cover transition-transform group-hover:translate-x-2 group-hover:-translate-y-2 rounded-md"
+        objectFit="cover"
+        className="transition-transform group-hover:translate-x-2 group-hover:-translate-y-2 rounded-md"
       />
     );
   }
 
   return (
-    <div className="group aspect-video relative rounded-md cursor-pointer">
+    <div className="group relative rounded-md cursor-pointer flex-grow aspect-video">
       <div className="rounded-md absolute inset-0 bg-blue-600 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center" />
       {content}
       {isLive && src && (
-        <div className="absolute top-2 left-2 group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform">
-          <LiveBadge />
-        </div>
+        <>
+          <div className="absolute top-2 left-2 group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform">
+            <LiveBadge />
+          </div>
+          <div className="absolute bottom-2 left-2 group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform">
+            <div className="bg-black bg-opacity-50 text-center p-0.5 px-1.5 rounded-md text-[15px] font-semibold tracking-wide">
+              Viewer{` 20.000`}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

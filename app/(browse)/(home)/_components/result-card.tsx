@@ -1,9 +1,9 @@
-import { LiveBadge } from '@/components/live-badge';
-import { Thumbnail, ThumbnailSkeleton } from '@/components/thumbnail';
-import { UserAvatar, UserAvatarSkeleton } from '@/components/user-avatar';
-import { User, Stream } from '@prisma/client';
-import Link from 'next/link';
-import { Skeleton } from '@/components/ui/skeleton';
+import { LiveBadge } from "@/components/live-badge";
+import { Thumbnail, ThumbnailSkeleton } from "@/components/thumbnail";
+import { UserAvatar, UserAvatarSkeleton } from "@/components/user-avatar";
+import { User, Stream } from "@prisma/client";
+import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ResultCardProps {
   data: {
@@ -16,8 +16,8 @@ interface ResultCardProps {
 
 export const ResultCard = ({ data }: ResultCardProps) => {
   return (
-    <Link href={`/${data.user.username}`}>
-      <div className="h-full w-full space-y-4 ">
+    <Link href={`/${data.user.username}`} className="">
+      <div className="space-y-4 h-full w-full">
         <Thumbnail
           src={data.thumbnail}
           fallback={data.user.image!}

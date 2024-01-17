@@ -1,26 +1,30 @@
-import { getStreams } from "@/actions/stream";
+import { getFollowedStreams } from "@/actions/stream";
 import { ResultCard, ResultCardSkeleton } from "./result-card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const Results = async () => {
-  const streams = await getStreams();
+export const Following = async () => {
+  const streams = await getFollowedStreams();
 
   return (
     <div className="">
+      <p className="pb-2 font-bold" style={{ fontSize: "x-large" }}>
+        Follower
+      </p>
       {streams.length === 0 && (
         <div className="text-muted-foreground text-sm">No streams found.</div>
       )}
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"> */}
-      <div className="flex justify-between px-24 space-x-2">
-        {streams.map((stream: any) => (
-          <ResultCard key={stream.id} data={stream} />
+      <div className="flex px-5 space-x-2 justify-center">
+        {[...streams, ...streams, ...streams].map((stream: any) => (
+          <div key={stream.id} className="flex-1 max-w-xs">
+            <ResultCard data={stream} />
+          </div>
         ))}
       </div>
     </div>
   );
 };
 
-export const ResultsSkeleton = () => {
+export const FollowingSkeleton = () => {
   return (
     <div>
       <Skeleton className="h-8 w-[290px] mb-4 flex-grow" />
