@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useRef, useState, useEffect } from 'react';
-import { useEventListener } from 'usehooks-ts';
+import { useRef, useState, useEffect } from "react";
+import { useEventListener } from "usehooks-ts";
 
-import { FullscreenControl } from './fullscreen-control';
-import { VolumeControl } from './volume-control';
-import Hls from 'hls.js';
-import { LoadingVideo } from './loading-video';
+import { FullscreenControl } from "./fullscreen-control";
+import { VolumeControl } from "./volume-control";
+import Hls from "hls.js";
+import { LoadingVideo } from "./loading-video";
 
 interface LiveVideoProps {
   username: string;
@@ -49,7 +49,7 @@ export const LiveVideo = ({ username }: LiveVideoProps) => {
     setIsFullscreen(isCurrentlyFullscreen);
   };
 
-  useEventListener('fullscreenchange', handleFullscreenChange, wrapperRef);
+  useEventListener("fullscreenchange", handleFullscreenChange, wrapperRef);
 
   const toggleFullscreen = () => {
     if (isFullscreen) {
@@ -75,11 +75,9 @@ export const LiveVideo = ({ username }: LiveVideoProps) => {
       hls.loadSource(src);
       hls.attachMedia(video);
 
-      console.log('Registering manifest parsed event');
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         setManifestParsed(true);
-        console.log('manifest parsed');
-        video.play().catch((e) => console.error('Error playing video!', e));
+        video.play().catch((e) => console.error("Error playing video!", e));
       });
 
       hls.on(Hls.Events.LEVEL_LOADED, (event, data) => {
@@ -95,9 +93,9 @@ export const LiveVideo = ({ username }: LiveVideoProps) => {
           }
         }
       });
-    } else if (video && video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.addEventListener('loadedmetadata', () => {
-        video.play().catch((e) => console.error('Error playing video:', e));
+    } else if (video && video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.addEventListener("loadedmetadata", () => {
+        video.play().catch((e) => console.error("Error playing video:", e));
       });
     }
   }, [src]);
@@ -105,10 +103,10 @@ export const LiveVideo = ({ username }: LiveVideoProps) => {
   return (
     <div
       ref={wrapperRef}
-      className="relative h-full flex"
+      className="relative h-full flex aspect-video"
       onDoubleClick={toggleFullscreen}
     >
-      <video src={src} width={'100%'} ref={videoRef} />
+      <video src={src} width={"100%"} ref={videoRef} />
       <div className="absolute top-0 h-full w-full opacity-0 hover:opacity-100 hover:transition-all">
         <div className="absolute bottom-0 flex h-14 w-full items-center justify-between bg-gradient-to-r from-neutral-900 px-4">
           <VolumeControl

@@ -11,11 +11,13 @@ export const Following = async () => {
         Follower
       </p>
       {streams.length === 0 && (
-        <div className="text-muted-foreground text-sm">No streams found.</div>
+        <div className="text-muted-foreground text-sm">
+          You are not following anyone
+        </div>
       )}
-      <div className="flex px-5 space-x-2 justify-center">
-        {[...streams, ...streams, ...streams].map((stream: any) => (
-          <div key={stream.id} className="flex-1 max-w-xs">
+      <div className="grid grid-cols-6 gap-4">
+        {[...streams].map((stream: any) => (
+          <div key={stream.id} className="">
             <ResultCard data={stream} />
           </div>
         ))}

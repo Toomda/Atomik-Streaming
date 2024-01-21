@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useViewerToken } from '@/hooks/use-viewer-token';
-import { cn } from '@/lib/utils';
-import { Video, VideoSkeleton } from './video';
-import { useChatSidebar } from '@/store/use-chat-sidebar';
-import { Chat, ChatSkeleton } from './chat';
-import { ChatToggle } from './chat-toggle';
-import { Header, HeaderSkeleton } from './header';
-import { InfoCard } from './info-card';
-import { AboutCard } from './about-card';
-import { StreamingRoom } from '../streaming-room';
+import { useViewerToken } from "@/hooks/use-viewer-token";
+import { cn } from "@/lib/utils";
+import { Video, VideoSkeleton } from "./video";
+import { useChatSidebar } from "@/store/use-chat-sidebar";
+import { Chat, ChatSkeleton } from "./chat";
+import { ChatToggle } from "./chat-toggle";
+import { Header, HeaderSkeleton } from "./header";
+import { InfoCard } from "./info-card";
+import { AboutCard } from "./about-card";
+import { StreamingRoom } from "../streaming-room";
 
 type CustomStream = {
   id: string;
@@ -18,6 +18,13 @@ type CustomStream = {
   isChatFollowersOnly: boolean;
   isLive: boolean;
   thumbnail: string | null;
+  name: string;
+  Category: Category;
+};
+
+export type Category = {
+  id: string;
+  thumbnail: string;
   name: string;
 };
 
@@ -60,11 +67,11 @@ export const StreamPlayer = ({
         hostName={user.username!}
         localViewerName={name}
         classNames={cn(
-          'grid grid-cols-1 lg:gap-y-1 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-6 h-full',
-          collapsed && 'lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2'
+          "grid grid-cols-1 lg:gap-y-1 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-8 h-full",
+          collapsed && "lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2"
         )}
       >
-        <div className="space-y-4 col-span-1 lg:col-span-2 xl:col-span-2 2xl:col-span-5 lg:overflow-y-auto hidden-scrollbar pb-10">
+        <div className="space-y-4 col-span-1 lg:col-span-3 xl:col-span-3 2xl:col-span-6 lg:overflow-y-auto hidden-scrollbar pb-10">
           <Video hostName={user.username!} />
           <Header
             hostName={user.username!}
@@ -79,6 +86,7 @@ export const StreamPlayer = ({
             viewerIdentity={identity}
             name={stream.name}
             thumbnail={stream.thumbnail}
+            category={stream.Category}
           />
           <AboutCard
             hostName={user.username!}
@@ -88,7 +96,7 @@ export const StreamPlayer = ({
             followedByCount={user._count.followedBy}
           />
         </div>
-        <div className={cn('col-span-1', collapsed && 'hidden')}>
+        <div className={cn("col-span-2", collapsed && "hidden")}>
           <Chat
             viewerName={name}
             hostName={user.username!}

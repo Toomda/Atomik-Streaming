@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { OfflineVideo } from './offline-video';
-import { LoadingVideo } from './loading-video';
-import { LiveVideo } from './live-video';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useRoom } from '@/context/room-context';
-import { useState } from 'react';
+import { OfflineVideo } from "./offline-video";
+import { LoadingVideo } from "./loading-video";
+import { LiveVideo } from "./live-video";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useRoom } from "@/context/room-context";
+import { useState } from "react";
 
 interface VideoProps {
   hostName: string;

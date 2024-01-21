@@ -1,4 +1,4 @@
-import { Categories } from "./_components/Categories";
+import { Categories, CategoriesSkeleton } from "./_components/Categories";
 import { Following, FollowingSkeleton } from "./_components/following";
 import { Recommended, RecommndedSkeleton } from "./_components/recommended";
 import { Suspense } from "react";
@@ -12,7 +12,9 @@ export default function Home() {
         <p className="pb-2 font-bold" style={{ fontSize: "x-large" }}>
           Categories
         </p>
-        <Categories />
+        <Suspense fallback={<CategoriesSkeleton />}>
+          <Categories />
+        </Suspense>
       </div>
       <Suspense fallback={<FollowingSkeleton />}>
         <Following />

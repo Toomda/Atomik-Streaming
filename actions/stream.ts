@@ -1,10 +1,18 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { Stream } from "@prisma/client";
 
 import { getSelf } from "@/lib/auth-service";
 import axios from "axios";
+
+interface Stream {
+  thumbnail: string;
+  name: string;
+  isChatDelayed: boolean;
+  isChatEnabled: boolean;
+  isChatFollowersOnly: boolean;
+  categoryId: string;
+}
 
 export const updateStream = async (values: Partial<Stream>) => {
   const self = await getSelf();
@@ -19,6 +27,7 @@ export const updateStream = async (values: Partial<Stream>) => {
         isChatDelayed: values.isChatDelayed,
         isChatEnabled: values.isChatEnabled,
         isChatFollowersOnly: values.isChatFollowersOnly,
+        categoryId: values.categoryId,
       },
       {
         headers: {
@@ -124,7 +133,7 @@ export const getFollowedStreams = async () => {
   try {
     self = await getSelf();
   } catch {
-    throw new Error("Must be logged in!");
+    return [];
   }
 
   let response;

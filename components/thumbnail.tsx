@@ -35,22 +35,21 @@ export const Thumbnail = ({
         src={`http://localhost:5000/api/${src}`}
         fill
         alt="Thumbnail"
-        objectFit="cover"
-        className="transition-transform group-hover:translate-x-2 group-hover:-translate-y-2 rounded-md"
+        sizes="h-full w-full"
+        className="object-cover transition-transform group-hover:translate-x-2 group-hover:-translate-y-2 rounded-md"
       />
     );
   }
 
   return (
-    <div className="group relative rounded-md cursor-pointer flex-grow aspect-video">
-      <div className="rounded-md absolute inset-0 bg-blue-600 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center" />
+    <div className="relative rounded-md cursor-pointer aspect-video">
       {content}
       {isLive && src && (
         <>
-          <div className="absolute top-2 left-2 group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform">
+          <div className="absolute top-2 left-2">
             <LiveBadge />
           </div>
-          <div className="absolute bottom-2 left-2 group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform">
+          <div className="absolute bottom-2 left-2">
             <div className="bg-black bg-opacity-50 text-center p-0.5 px-1.5 rounded-md text-[15px] font-semibold tracking-wide">
               Viewer{` 20.000`}
             </div>

@@ -1,14 +1,16 @@
-'use client';
+"use client";
 
-import { Pencil } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
-import { InfoModal } from './info-modal';
+import { Pencil } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { InfoModal } from "./info-modal";
+import { Category } from ".";
 
 interface InfoCardProps {
   name: string;
   thumbnail: string | null;
   hostIdentity: string;
   viewerIdentity: string;
+  category: Category | null;
 }
 
 export const InfoCard = ({
@@ -16,6 +18,7 @@ export const InfoCard = ({
   name,
   thumbnail,
   viewerIdentity,
+  category,
 }: InfoCardProps) => {
   const hostAsViewer = `host-${hostIdentity}`;
   const isHost = viewerIdentity === hostAsViewer;
@@ -37,7 +40,11 @@ export const InfoCard = ({
               Maximize your visibility
             </p>
           </div>
-          <InfoModal initialName={name} initialThumbnail={thumbnail} />
+          <InfoModal
+            initialName={name}
+            initialThumbnail={thumbnail}
+            initialCategory={category}
+          />
         </div>
         <Separator />
         <div className="p-4 lg:p-6 space-y-4">
