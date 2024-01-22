@@ -20,7 +20,7 @@ export const updateStream = async (values: Partial<Stream>) => {
   let response;
   response = await axios
     .post(
-      `http://localhost:5000/api/stream/${self.id}`,
+      `${process.env.BASE_URL}/stream/${self.id}`,
       {
         thumbnail: values.thumbnail,
         name: values.name,
@@ -54,14 +54,11 @@ export const getStreamKeyByUserId = async (userId: string) => {
 
   let response;
   try {
-    response = await axios.get(
-      `http://localhost:5000/api/streamkey/${userId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${self.token}`,
-        },
-      }
-    );
+    response = await axios.get(`${process.env.BASE_URL}/streamkey/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${self.token}`,
+      },
+    });
   } catch (error) {
     throw new Error(`Could not get Streamkey for userId ${userId}`);
   }
@@ -72,7 +69,7 @@ export const getStreamKeyByUserId = async (userId: string) => {
 export const getStreamByUserId = async (userId: string) => {
   let response;
   try {
-    response = await axios.get(`http://localhost:5000/api/stream/${userId}`);
+    response = await axios.get(`${process.env.BASE_URL}/stream/${userId}`);
   } catch (error) {
     throw new Error(`Could not get Livestream for userId ${userId}`);
   }
@@ -91,7 +88,7 @@ export const getStreams = async () => {
 
   let response;
   try {
-    response = await axios.get("http://localhost:5000/api/stream/", {
+    response = await axios.get(`${process.env.BASE_URL}/stream/`, {
       data: {
         uid: userId,
       },
@@ -115,7 +112,7 @@ export const getRecommended = async () => {
 
   let response;
   try {
-    response = await axios.get("http://localhost:5000/api/user/recommended", {
+    response = await axios.get(`${process.env.BASE_URL}/user/recommended`, {
       data: {
         uid: userId,
       },
@@ -138,14 +135,11 @@ export const getFollowedStreams = async () => {
 
   let response;
   try {
-    response = await axios.get(
-      "http://localhost:5000/api/stream/followed/all",
-      {
-        headers: {
-          Authorization: `Bearer ${self.token}`,
-        },
-      }
-    );
+    response = await axios.get(`${process.env.BASE_URL}/stream/followed/all`, {
+      headers: {
+        Authorization: `Bearer ${self.token}`,
+      },
+    });
   } catch (error) {
     console.log(error);
     throw new Error("Error while getting recommended Users");

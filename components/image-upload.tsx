@@ -1,8 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Hint } from './hint';
-import { Button } from './ui/button';
-import { Trash } from 'lucide-react';
+import React, { useRef, useState, useEffect } from "react";
+import Image from "next/image";
+import { Hint } from "./hint";
+import { Button } from "./ui/button";
+import { Trash } from "lucide-react";
 
 interface ImageUploadProps {
   onInput: (file: File | null) => void;
@@ -54,7 +54,7 @@ const ImageUpload = ({
   };
 
   const onRemoveImage = () => {
-    setPreviewUrl('');
+    setPreviewUrl("");
     setFile(undefined);
 
     onInput(null);
@@ -65,12 +65,12 @@ const ImageUpload = ({
       <input
         id={id}
         type="file"
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         accept=".jpg,.png,.jpeg"
         ref={inputRef}
         onChange={pickedHandler}
       />
-      <div className={`image-upload space-y-6 ${center && 'center'}`}>
+      <div className={`image-upload space-y-6 ${center && "center"}`}>
         <div className="image-upload__preview">
           <div className="relative aspect-video rounded-xl overflow-hidden border outline-dashed outline-muted">
             <div className="absolute top-2 right-2 z-[10]">
@@ -87,8 +87,8 @@ const ImageUpload = ({
             {previewUrl && (
               <Image
                 src={
-                  previewUrl.startsWith('uploads')
-                    ? `http://localhost:5000/api/${previewUrl}`
+                  previewUrl.startsWith("uploads")
+                    ? `${process.env.NEXT_PUBLIC_RESOURCE_URL}/${previewUrl}`
                     : previewUrl
                 }
                 alt="Image"

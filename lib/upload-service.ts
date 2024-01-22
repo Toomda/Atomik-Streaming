@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { getSelf } from './auth-service';
+import axios from "axios";
+import { getSelf } from "./auth-service";
 
 export const uploadImageByUserId = async (file: File, userId: string) => {
   const self = await getSelf();
@@ -8,20 +8,20 @@ export const uploadImageByUserId = async (file: File, userId: string) => {
 
   try {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append("image", file);
 
     response = await axios.post(
-      `http://localhost:5000/api/user/files/upload/${userId}`,
+      `${process.env.BASE_URL}/user/files/upload/${userId}`,
       formData,
       {
         headers: {
           Authorization: `Bearer ${self.token}`,
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       }
     );
   } catch (error) {
-    throw new Error('Something went wrong, uploading the file');
+    throw new Error("Something went wrong, uploading the file");
   }
 
   return response;
@@ -36,19 +36,19 @@ export const uploadThumbnailByStreamId = async (
   let response;
   try {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append("image", file);
 
     response = await axios.post(
-      `http://localhost:5000/api/stream/files/upload/${streamId}`,
+      `${process.env.BASE_URL}/stream/files/upload/${streamId}`,
       formData,
       {
         headers: {
           Authorization: `Bearer ${self.token}`,
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       }
     );
   } catch (error) {
-    throw new Error('Something went wrong, uploading the file');
+    throw new Error("Something went wrong, uploading the file");
   }
 };

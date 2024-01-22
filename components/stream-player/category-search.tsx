@@ -61,7 +61,7 @@ export const CategorySearch = ({
       {selectedCategory ? (
         <div className="rounded-xl border flex relative">
           <Image
-            src={`http://localhost:5000/api/${selectedCategory.thumbnail}`}
+            src={`${process.env.NEXT_PUBLIC_RESOURCE_URL}/${selectedCategory.thumbnail}`}
             alt={selectedCategory.name}
             width={60}
             height={52}
@@ -98,7 +98,7 @@ export const CategorySearch = ({
               >
                 <div className="w-full flex space-x-2 cursor-pointer hover:bg-blue-200 hover:bg-opacity-20">
                   <Image
-                    src={`http://localhost:5000/api/${category.thumbnail}`}
+                    src={`${process.env.NEXT_PUBLIC_RESOURCE_URL}/${category.thumbnail}`}
                     alt={category.name}
                     width={60}
                     height={52}

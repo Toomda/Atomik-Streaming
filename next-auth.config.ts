@@ -1,21 +1,21 @@
-import { NextAuthConfig } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import axios from 'axios';
+import { NextAuthConfig } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import axios from "axios";
 
 export default {
   providers: [
     CredentialsProvider({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
-        username: { label: 'Username', type: 'text', placeholder: 'username' },
-        password: { label: 'Password', type: 'password' },
+        username: { label: "Username", type: "text", placeholder: "username" },
+        password: { label: "Password", type: "password" },
       },
-      type: 'credentials',
+      type: "credentials",
       async authorize(credentials) {
         // Add logic here to look up the user from the credentials supplied
         let response;
         try {
-          response = await axios.post('http://localhost:5000/api/user/login', {
+          response = await axios.post(`${process.env.BASE_URL}/user/login`, {
             username: credentials.username,
             password: credentials.password,
           });

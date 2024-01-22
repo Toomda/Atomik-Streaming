@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { io, Socket } from "socket.io-client";
 import axios, { AxiosResponse } from "axios";
+import { getRoomInformation } from "@/actions/room";
 
 interface Participant {
   username?: string;
@@ -101,17 +102,10 @@ export const RoomProvider = ({
     };
 
     const fetchRoomInfo = async () => {
-      let response: AxiosResponse;
-      try {
-        response = await axios.get(
-          `http://localhost:5000/api/room/${hostNameRef.current}`
-        );
-      } catch (error) {
-        throw new Error("Could not get Room info");
-      }
+      const roomInfo = await getRoomInformation(hostNameRef.current);
 
       setRemoteViewer((prev) => {
-        const newViewer = response.data.viewer.map((viewer: any) => {
+        const newViewer = roomInfo.viewer.map((viewer: any) => {
           if (!prev.find((rv) => rv.username === viewer.username)) {
             return viewer;
           }
@@ -119,13 +113,13 @@ export const RoomProvider = ({
 
         return [...prev, ...newViewer].filter((x) => x !== undefined);
       });
-      setMessages(response.data.messages);
-      setIsLive(response.data.isLive);
-      setGuestViewer(response.data.guestViewer);
+      setMessages(roomInfo.messages);
+      setIsLive(roomInfo.isLive);
+      setGuestViewer(roomInfo.guestViewer);
     };
 
     if (!socketRef.current) {
-      socketRef.current = io("http://localhost:5000/");
+      socketRef.current = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}`);
 
       socketRef.current.on("chat-message", handleChatMessage);
 

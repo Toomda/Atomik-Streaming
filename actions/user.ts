@@ -1,9 +1,9 @@
-'use server';
+"use server";
 
-import { revalidatePath } from 'next/cache';
-import axios from 'axios';
-import { getSelf } from '../lib/auth-service';
-import { signOut } from 'next-auth/react';
+import { revalidatePath } from "next/cache";
+import axios from "axios";
+import { getSelf } from "../lib/auth-service";
+import { signOut } from "next-auth/react";
 
 interface UserResponse {
   userId: string;
@@ -22,10 +22,10 @@ export const registerUser = async (
   email: string
 ) => {
   if (!email || !username || !password) {
-    throw new Error('You need an email, username and password');
+    throw new Error("You need an email, username and password");
   }
 
-  const response = await axios.post('http://localhost:5000/api/user/register', {
+  const response = await axios.post(`${process.env.BASE_URL}/user/register`, {
     email,
     username,
     password,
@@ -33,7 +33,7 @@ export const registerUser = async (
 
   if (response.status !== 201) {
     throw new Error(
-      'Something went wrong, trying to register. Please try again.'
+      "Something went wrong, trying to register. Please try again."
     );
   }
 
@@ -42,15 +42,15 @@ export const registerUser = async (
 
 export const loginUser = async (username: string, password: string) => {
   if (!username || !password)
-    throw new Error('Pleas provide an email, and a password');
+    throw new Error("Pleas provide an email, and a password");
 
-  const response = await axios.post('http://localhost:5000/api/user/login', {
+  const response = await axios.post(`${process.env.BASE_URL}/user/login`, {
     username,
     password,
   });
 
   if (response.status !== 200) {
-    throw new Error('Invalid Credentials! Please try again!');
+    throw new Error("Invalid Credentials! Please try again!");
   }
 
   const responseData: UserResponse = response.data;
@@ -63,13 +63,13 @@ export const deleteUserById = async (id: string) => {
 
   let response;
   try {
-    response = await axios.delete(`http://localhost:5000/api/user/${self.id}`, {
+    response = await axios.delete(`${process.env.BASE_URL}/user/${self.id}`, {
       headers: {
         Authorization: `Bearer ${self.token}`,
       },
     });
   } catch (error) {
-    throw new Error('Something went wrong, trying to update the user!');
+    throw new Error("Something went wrong, trying to update the user!");
   }
 
   if (response.status !== 200) {
@@ -91,7 +91,7 @@ export const updateUser = async (values: Partial<User>) => {
     console.log(values.username);
 
     response = await axios.patch(
-      `http://localhost:5000/api/user/${self.id}`,
+      `${process.env.BASE_URL}/user/${self.id}`,
       validData,
       {
         headers: {
@@ -100,7 +100,7 @@ export const updateUser = async (values: Partial<User>) => {
       }
     );
   } catch (error) {
-    throw new Error('Something went wrong, trying to update the user!');
+    throw new Error("Something went wrong, trying to update the user!");
   }
 
   if (response.status !== 200) {
@@ -120,7 +120,7 @@ export const getUserByUsername = async (username: string) => {
   let response;
   try {
     response = await axios.get(
-      `http://localhost:5000/api/user/username/${username}`
+      `${process.env.BASE_URL}/user/username/${username}`
     );
   } catch (error) {
     throw new Error(
@@ -134,7 +134,7 @@ export const getUserByUsername = async (username: string) => {
 export const getUserById = async (id: string) => {
   let response;
   try {
-    response = await axios.get(`http://localhost:5000/api/user/${id}`);
+    response = await axios.get(`${process.env.BASE_URL}/user/${id}`);
   } catch (error) {
     throw new Error(`Unexpected Error while trying to retrieve the user ${id}`);
   }

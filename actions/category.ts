@@ -5,7 +5,7 @@ import axios from "axios";
 export const getCategories = async () => {
   let result;
   try {
-    result = await axios.get("http://localhost:5000/api/category");
+    result = await axios.get(`${process.env.BASE_URL}/category`);
   } catch (error) {
     throw new Error("Error while getting recommended Categories");
   }
@@ -16,7 +16,7 @@ export const getCategories = async () => {
 export const getCategoriesBySearchTerm = async (searchTerm: string) => {
   let result;
   try {
-    result = await axios.get("http://localhost:5000/api/category/search", {
+    result = await axios.get(`${process.env.BASE_URL}/category/search`, {
       data: {
         searchTerm,
       },

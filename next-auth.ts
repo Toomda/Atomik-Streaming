@@ -1,6 +1,6 @@
-import NextAuth from 'next-auth';
-import authConfig from './next-auth.config';
-import axios from 'axios';
+import NextAuth from "next-auth";
+import authConfig from "./next-auth.config";
+import axios from "axios";
 
 export const {
   handlers: { GET, POST },
@@ -9,9 +9,9 @@ export const {
   signOut,
 } = NextAuth({
   pages: {
-    signIn: '/login',
+    signIn: "/login",
   },
-  session: { strategy: 'jwt' },
+  session: { strategy: "jwt" },
   callbacks: {
     async session({ token, session }) {
       if (!token.sub) {
@@ -24,7 +24,7 @@ export const {
         };
       }
       const response = await axios.get(
-        `http://localhost:5000/api/user/${token.sub}`
+        `${process.env.BASE_URL}/user/${token.sub}`
       );
 
       if (response.status !== 200 || !response.data.user) {

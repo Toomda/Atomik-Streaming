@@ -19,7 +19,7 @@ export const LiveVideo = ({ username }: LiveVideoProps) => {
   const [volume, setVolume] = useState(0);
   const [manifestParsed, setManifestParsed] = useState(false);
 
-  const src = `http://localhost:5000/api/stream/receive/${username}/index.m3u8`;
+  const src = `${process.env.BASE_URL}/stream/receive/${username}/index.m3u8`;
 
   const onVolumeChange = (value: number) => {
     setVolume(+value);

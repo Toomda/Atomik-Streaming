@@ -1,16 +1,16 @@
-'use server';
+"use server";
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath } from "next/cache";
 
-import axios from 'axios';
-import { getSelf } from '@/lib/auth-service';
+import axios from "axios";
+import { getSelf } from "@/lib/auth-service";
 
 export const onFollow = async (id: string) => {
   const self = await getSelf();
 
   try {
     const response = await axios
-      .post(`http://localhost:5000/api/user/follow/${id}`, null, {
+      .post(`${process.env.BASE_URL}/user/follow/${id}`, null, {
         headers: {
           Authorization: `Bearer ${self.token}`,
         },
@@ -19,14 +19,14 @@ export const onFollow = async (id: string) => {
         throw new Error(err.response.statusText);
       });
 
-    revalidatePath('/');
+    revalidatePath("/");
     if (response.data.followed) {
       revalidatePath(`/${response.data.followed}`);
     }
 
     return response.data.followed;
   } catch (error) {
-    throw new Error('Internal Error');
+    throw new Error("Internal Error");
   }
 };
 
@@ -35,7 +35,7 @@ export const onUnfollow = async (id: string) => {
 
   try {
     const response = await axios
-      .post(`http://localhost:5000/api/user/unfollow/${id}`, null, {
+      .post(`${process.env.BASE_URL}/user/unfollow/${id}`, null, {
         headers: {
           Authorization: `Bearer ${self.token}`,
         },
@@ -44,14 +44,14 @@ export const onUnfollow = async (id: string) => {
         throw new Error(err.response.statusText);
       });
 
-    revalidatePath('/');
+    revalidatePath("/");
     if (response.data.followed) {
       revalidatePath(`/${response.data.followed}`);
     }
 
     return response.data.followed;
   } catch (error) {
-    throw new Error('Internal Error');
+    throw new Error("Internal Error");
   }
 };
 
@@ -60,7 +60,7 @@ export const isFollowingUser = async (id: string) => {
   try {
     const self = await getSelf();
 
-    response = await axios.get(`http://localhost:5000/api/user/follow/${id}`, {
+    response = await axios.get(`${process.env.BASE_URL}/user/follow/${id}`, {
       headers: {
         Authorization: `Bearer ${self.token}`,
       },
@@ -81,7 +81,7 @@ export const getFollowedUsers = async () => {
 
   let response;
   try {
-    response = await axios.get('http://localhost:5000/api/user/follow/all', {
+    response = await axios.get(`${process.env.BASE_URL}/user/follow/all`, {
       headers: {
         Authorization: `Bearer ${self.token}`,
       },

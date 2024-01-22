@@ -1,5 +1,5 @@
-import { getSelf } from '@/lib/auth-service';
-import axios from 'axios';
+import { getSelf } from "@/lib/auth-service";
+import axios from "axios";
 
 export const getSearch = async (term?: string) => {
   let userId;
@@ -14,7 +14,7 @@ export const getSearch = async (term?: string) => {
   let response;
   try {
     response = await axios.get(
-      `http://localhost:5000/api/stream/search/${term}`,
+      `${process.env.BASE_URL}/stream/search/${term}`,
       {
         data: {
           uid: userId,
@@ -23,7 +23,7 @@ export const getSearch = async (term?: string) => {
     );
   } catch (error) {
     console.log(error);
-    throw new Error('Error while trying to get the search');
+    throw new Error("Error while trying to get the search");
   }
 
   return response.data.streams;

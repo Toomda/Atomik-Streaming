@@ -17,6 +17,7 @@ export const Thumbnail = ({
   username,
 }: ThumbnailProps) => {
   let content;
+
   if (!src) {
     content = (
       <div className="bg-background flex flex-col items-center justify-center gap-y-4 w-full h-full transition-transform group-hover:translate-x-2 group-hover:-translate-y-2 rounded-md">
@@ -32,7 +33,7 @@ export const Thumbnail = ({
   } else {
     content = (
       <Image
-        src={`http://localhost:5000/api/${src}`}
+        src={`${process.env.NEXT_PUBLIC_RESOURCE_URL}/${src}`}
         fill
         alt="Thumbnail"
         sizes="h-full w-full"
