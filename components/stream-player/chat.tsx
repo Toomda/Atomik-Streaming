@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { ChatVariant, useChatSidebar } from '@/store/use-chat-sidebar';
-import { useEffect, useMemo, useState } from 'react';
-import { useMediaQuery } from 'usehooks-ts';
-import { ChatHeader, ChatHeaderSkeleton } from './chat-header';
-import { ChatForm, ChatFormSkeleton } from './chat-form';
-import { ChatList, ChatListSkeleton } from './chat-list';
-import { ChatCommunity } from './chat-community';
-import { useRoom } from '@/context/room-context';
-import { useAuth } from '@/lib/auth';
+import { ChatVariant, useChatSidebar } from "@/store/use-chat-sidebar";
+import { useEffect, useMemo, useState } from "react";
+import { useMediaQuery } from "usehooks-ts";
+import { ChatHeader, ChatHeaderSkeleton } from "./chat-header";
+import { ChatForm, ChatFormSkeleton } from "./chat-form";
+import { ChatList, ChatListSkeleton } from "./chat-list";
+import { ChatCommunity } from "./chat-community";
+import { useRoom } from "@/context/room-context";
+import { useAuth } from "@/lib/auth";
 
 interface ChatProps {
   hostName: string;
@@ -35,7 +35,7 @@ export const Chat = ({
   const isHidden = !isChatEnabled;
 
   const user = useAuth();
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
   const { messages, sendMessage } = useRoom();
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export const Chat = ({
   const onSubmit = () => {
     console.log(user);
     sendMessage(value);
-    setValue('');
+    setValue("");
   };
 
   const onChange = (value: string) => {

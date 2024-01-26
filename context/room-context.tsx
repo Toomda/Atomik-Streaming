@@ -1,19 +1,14 @@
 "use client";
 
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useMemo,
-  useRef,
-} from "react";
+import React, { createContext, useState, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
-import axios, { AxiosResponse } from "axios";
 import { getRoomInformation } from "@/actions/room";
+import { isBannedByUser } from "@/actions/ban";
 
 interface Participant {
   username?: string;
   image?: string;
+  id?: string;
 }
 
 interface Room {
@@ -21,6 +16,7 @@ interface Room {
   hostName: string;
   localViewer: Participant;
   isLive: boolean;
+  isBanned: boolean;
   messages: ChatMessage[];
   guestViewer: number;
   sendMessage: (message: string) => void;
@@ -30,6 +26,8 @@ interface RoomProviderProps {
   children: React.ReactNode;
   initialHostName: string;
   initialLocalViewerName?: string;
+  initialLocalViewerIdentity?: string;
+  initialIsBanned: boolean;
 }
 
 export interface ChatMessage {
@@ -44,13 +42,17 @@ export const RoomProvider = ({
   children,
   initialHostName,
   initialLocalViewerName,
+  initialLocalViewerIdentity,
+  initialIsBanned,
 }: RoomProviderProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [remoteViewer, setRemoteViewer] = useState<Participant[]>([]);
   const [guestViewer, setGuestViewer] = useState(0);
   const [isLive, setIsLive] = useState(false);
+  const [isBanned, setIsBanned] = useState<boolean>(initialIsBanned);
   const hostNameRef = useRef(initialHostName);
   const localViewerNameRef = useRef(initialLocalViewerName);
+  const localViewerIdentityRef = useRef(initialLocalViewerIdentity);
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -70,9 +72,6 @@ export const RoomProvider = ({
     };
 
     const handleViewerJoined = (viewer: Participant) => {
-      console.log("viewer joined", viewer.username);
-      console.log("i am", localViewerNameRef.current);
-      // if (viewer.username === localViewerNameRef.current) return;
       if (!viewer.username) {
         setGuestViewer((prev) => prev + 1);
         return;
@@ -97,12 +96,21 @@ export const RoomProvider = ({
     };
 
     const handleLiveStatus = (isLive: boolean) => {
-      console.log("Got Live status change");
       setIsLive(isLive);
+    };
+
+    const handleBan = () => {
+      setIsBanned(true);
+    };
+    const handleUnban = () => {
+      setIsBanned(false);
     };
 
     const fetchRoomInfo = async () => {
       const roomInfo = await getRoomInformation(hostNameRef.current);
+      const isBanned = await isBannedByUser(hostNameRef.current);
+
+      console.log(isBanned);
 
       setRemoteViewer((prev) => {
         const newViewer = roomInfo.viewer.map((viewer: any) => {
@@ -116,18 +124,18 @@ export const RoomProvider = ({
       setMessages(roomInfo.messages);
       setIsLive(roomInfo.isLive);
       setGuestViewer(roomInfo.guestViewer);
+      setIsBanned(isBanned);
     };
 
     if (!socketRef.current) {
       socketRef.current = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}`);
 
       socketRef.current.on("chat-message", handleChatMessage);
-
       socketRef.current.on("viewer-joined", handleViewerJoined);
-
       socketRef.current.on("viewer-left", handleViewerLeft);
-
       socketRef.current.on("live-status", handleLiveStatus);
+      socketRef.current.on("banned", handleBan);
+      socketRef.current.on("unbanned", handleUnban);
 
       window.addEventListener("beforeunload", disconnectChat);
     }
@@ -135,12 +143,12 @@ export const RoomProvider = ({
     socketRef.current.emit("room-join", {
       hostName: hostNameRef.current,
       viewerName: localViewerNameRef.current,
+      viewerIdentity: localViewerIdentityRef.current,
     });
 
     fetchRoomInfo();
 
     return () => {
-      console.log("Unmount");
       if (socketRef.current) {
         disconnectChat();
         window.removeEventListener("beforeunload", disconnectChat);
@@ -169,10 +177,14 @@ export const RoomProvider = ({
         messages,
         sendMessage,
         hostName: hostNameRef.current,
-        localViewer: { username: localViewerNameRef.current },
+        localViewer: {
+          username: localViewerNameRef.current,
+          id: localViewerIdentityRef.current,
+        },
         isLive,
         remoteViewer,
         guestViewer,
+        isBanned,
       }}
     >
       {children}
@@ -180,7 +192,7 @@ export const RoomProvider = ({
   );
 };
 
-export function useRoom() {
+export const useRoom = () => {
   const context = React.useContext(RoomContext);
   if (!context) {
     throw Error(
@@ -188,4 +200,4 @@ export function useRoom() {
     );
   }
   return context;
-}
+};

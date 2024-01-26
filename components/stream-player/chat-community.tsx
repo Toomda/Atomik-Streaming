@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useMemo, useState } from 'react';
-import { useDebounce } from 'usehooks-ts';
-import { Input } from '../ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { CommunityItem } from './community-item';
-import { useRoom } from '@/context/room-context';
+import { useMemo, useState } from "react";
+import { useDebounce } from "usehooks-ts";
+import { Input } from "../ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { CommunityItem } from "./community-item";
+import { useRoom } from "@/context/room-context";
 
 interface ChatCommunityProps {
   hostName: string;
@@ -18,30 +18,12 @@ export const ChatCommunity = ({
   viewerName,
   isHidden,
 }: ChatCommunityProps) => {
-  const [value, setValue] = useState('');
-  const debouncedValue = useDebounce<string>(value, 500);
-  // const participants = useParticipants();
+  const [value, setValue] = useState("");
   const { remoteViewer } = useRoom();
 
   const onChange = (newValue: string) => {
     setValue(newValue);
   };
-
-  // const filteredParticipants = useMemo(() => {
-  //   const deduped = participants.reduce((acc, participant) => {
-  //     const hostAsViewer = `host-${participant.identity}`;
-  //     if (!acc.some((p) => p.identity === hostAsViewer)) {
-  //       acc.push(participant);
-  //     }
-  //     return acc;
-  //   }, [] as (RemoteParticipant | LocalParticipant)[]);
-
-  //   return deduped.filter((participant) => {
-  //     return participant.name
-  //       ?.toLowerCase()
-  //       .includes(debouncedValue.toLowerCase());
-  //   });
-  // }, [participants, debouncedValue]);
 
   if (isHidden) {
     return (
@@ -68,6 +50,7 @@ export const ChatCommunity = ({
             hostName={hostName}
             viewerName={viewerName}
             participantName={viewer.username}
+            participantIdentity={viewer.id}
           />
         ))}
       </ScrollArea>

@@ -1,10 +1,12 @@
-import { RoomProvider } from '@/context/room-context';
+import { RoomProvider } from "@/context/room-context";
 
 interface StreamingRoomProps {
   classNames?: string;
   children: React.ReactNode;
   hostName: string;
   localViewerName?: string;
+  localViewerIdentity?: string;
+  isBanned: boolean;
 }
 
 export const StreamingRoom = ({
@@ -12,6 +14,8 @@ export const StreamingRoom = ({
   children,
   hostName,
   localViewerName,
+  localViewerIdentity,
+  isBanned,
 }: StreamingRoomProps) => {
   return (
     <div className={classNames}>
@@ -19,6 +23,8 @@ export const StreamingRoom = ({
         <RoomProvider
           initialHostName={hostName}
           initialLocalViewerName={localViewerName}
+          initialLocalViewerIdentity={localViewerIdentity}
+          initialIsBanned={isBanned}
         >
           {children}
         </RoomProvider>

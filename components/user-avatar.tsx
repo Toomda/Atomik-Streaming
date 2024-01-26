@@ -42,7 +42,7 @@ export const UserAvatar = ({
         )}
       >
         <AvatarImage
-          src={`${process.env.BASE_URL}/${imageUrl}`}
+          src={`${process.env.NEXT_PUBLIC_RESOURCE_URL}/${imageUrl}`}
           className="object-cover"
         />
         <AvatarFallback>

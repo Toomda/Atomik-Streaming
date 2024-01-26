@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import axios from "axios";
 import { getSelf } from "../lib/auth-service";
-import { signOut } from "next-auth/react";
 
 interface UserResponse {
   userId: string;

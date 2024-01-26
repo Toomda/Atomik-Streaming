@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { cn } from '@/lib/utils';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { ChatInfo } from './chat-info';
-import { useRoom } from '@/context/room-context';
-import { useAuth } from '@/lib/auth';
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ChatInfo } from "./chat-info";
+import { useRoom } from "@/context/room-context";
+import { useAuth } from "@/lib/auth";
 
 interface ChatFormProps {
   onSubmit: () => void;
@@ -30,10 +30,16 @@ export const ChatForm = ({
 }: ChatFormProps) => {
   const [isDelayBlocked, setIsDelayBlocked] = useState(false);
   const user = useAuth();
+  const room = useRoom();
+  const isBannedFromRoom = room.isBanned;
 
   const isFollowersOnlyAndNotFollowing = isChatFollowersOnly && !isFollowing;
   const isDisabled =
-    isHidden || isDelayBlocked || isFollowersOnlyAndNotFollowing || !user;
+    isHidden ||
+    isDelayBlocked ||
+    isFollowersOnlyAndNotFollowing ||
+    !user ||
+    isBannedFromRoom;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -70,11 +76,11 @@ export const ChatForm = ({
           onChange={(e) => onChange(e.target.value)}
           value={value}
           disabled={isDisabled}
-          placeholder={!!user ? 'Send a Message' : 'Please login to chat'}
+          placeholder={!!user ? "Send a Message" : "Please login to chat"}
           className={cn(
-            'border-white/10',
+            "border-white/10",
             (isChatFollowersOnly || isChatDelayed) &&
-              'rounded-t-none border-t-0'
+              "rounded-t-none border-t-0"
           )}
         />
       </div>

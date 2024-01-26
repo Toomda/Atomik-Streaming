@@ -1,5 +1,4 @@
 "use server";
-
 import axios, { AxiosResponse } from "axios";
 
 export const getRoomInformation = async (hostname: string) => {

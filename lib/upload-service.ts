@@ -10,8 +10,13 @@ export const uploadImageByUserId = async (file: File, userId: string) => {
     const formData = new FormData();
     formData.append("image", file);
 
+    console.log(`${process.env.BASE_URL}/user/files/upload/${userId}`);
+    console.log(userId);
+    console.log(file.type);
+    console.log(file.name);
+
     response = await axios.post(
-      `${process.env.BASE_URL}/user/files/upload/${userId}`,
+      `${process.env.NEXT_PUBLIC_RESOURCE_URL}/user/files/upload/${userId}`,
       formData,
       {
         headers: {
@@ -21,6 +26,7 @@ export const uploadImageByUserId = async (file: File, userId: string) => {
       }
     );
   } catch (error) {
+    console.log(error);
     throw new Error("Something went wrong, uploading the file");
   }
 
@@ -39,7 +45,7 @@ export const uploadThumbnailByStreamId = async (
     formData.append("image", file);
 
     response = await axios.post(
-      `${process.env.BASE_URL}/stream/files/upload/${streamId}`,
+      `${process.env.NEXT_PUBLIC_RESOURCE_URL}/stream/files/upload/${streamId}`,
       formData,
       {
         headers: {

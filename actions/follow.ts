@@ -10,7 +10,7 @@ export const onFollow = async (id: string) => {
 
   try {
     const response = await axios
-      .post(`${process.env.BASE_URL}/user/follow/${id}`, null, {
+      .post(`${process.env.BASE_URL}/follow/${id}`, null, {
         headers: {
           Authorization: `Bearer ${self.token}`,
         },
@@ -35,7 +35,7 @@ export const onUnfollow = async (id: string) => {
 
   try {
     const response = await axios
-      .post(`${process.env.BASE_URL}/user/unfollow/${id}`, null, {
+      .post(`${process.env.BASE_URL}/follow/unfollow/${id}`, null, {
         headers: {
           Authorization: `Bearer ${self.token}`,
         },
@@ -60,7 +60,7 @@ export const isFollowingUser = async (id: string) => {
   try {
     const self = await getSelf();
 
-    response = await axios.get(`${process.env.BASE_URL}/user/follow/${id}`, {
+    response = await axios.get(`${process.env.BASE_URL}/follow/${id}`, {
       headers: {
         Authorization: `Bearer ${self.token}`,
       },
@@ -81,7 +81,7 @@ export const getFollowedUsers = async () => {
 
   let response;
   try {
-    response = await axios.get(`${process.env.BASE_URL}/user/follow/all`, {
+    response = await axios.get(`${process.env.BASE_URL}/follow`, {
       headers: {
         Authorization: `Bearer ${self.token}`,
       },

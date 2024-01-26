@@ -24,8 +24,8 @@ export const CategoryItem = ({ category }: CategoryItemProps) => {
 
 export const CategoryItemSkeleton = () => {
   return (
-    <div>
-      <Skeleton className="flex-grow relative cursor-pointer aspect-[9/16] border-orange-400 rounded-xl" />
-    </div>
+    // <div className="relative cursor-pointer border w-40 h-52 rounded-lg">
+    <Skeleton className="relative cursor-pointer border w-40 h-52 rounded-lg" />
+    // </div>
   );
 };

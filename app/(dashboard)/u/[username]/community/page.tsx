@@ -1,17 +1,17 @@
-// import { getBlockedUsers } from "@/lib/block-service";
-import { columns } from './_components/columns';
-import { DataTable } from './_components/data-table';
-import { format } from 'date-fns';
+import { getBannedUsers } from "@/actions/ban";
+import { columns } from "./_components/columns";
+import { DataTable } from "./_components/data-table";
+import { format } from "date-fns";
 
 const CommunityPage = async () => {
-  const blockedUsers: any[] = [];
+  const bannedUsers = await getBannedUsers();
 
-  const formattedData = blockedUsers.map((block) => ({
-    ...block,
-    userId: block.blocked.id,
-    imageUrl: block.blocked.image!,
-    username: block.blocked.username,
-    createdAt: format(new Date(block.blocked.createdAt), 'dd/MM/yyyy'),
+  const formattedData = bannedUsers.map((user: any) => ({
+    ...user,
+    userId: user.id,
+    imageUrl: user.image,
+    username: user.username,
+    createdAt: format(new Date(user.createdAt), "dd/MM/yyyy"),
   }));
 
   return (

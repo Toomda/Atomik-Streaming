@@ -69,7 +69,7 @@ export const ResultCard = ({ data }: ResultCardProps) => {
 
 export const ResultCardSkeleton = () => {
   return (
-    <div className="h-full w-full space-y-4">
+    <div className="space-y-4">
       <ThumbnailSkeleton />
       <div className="flex gap-x-3">
         <UserAvatarSkeleton />

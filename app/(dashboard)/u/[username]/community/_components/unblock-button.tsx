@@ -1,22 +1,28 @@
-'use client';
+"use client";
 
-// import { onUnblock } from "@/actions/block";
-import { Button } from '@/components/ui/button';
-import { useTransition } from 'react';
+import { onUnban } from "@/actions/ban";
+import { Button } from "@/components/ui/button";
+import { useTransition } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface UnblockButtonProps {
   userId: string;
 }
 
 export const UnblockButton = ({ userId }: UnblockButtonProps) => {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const onClick = () => {
-    // startTransition(() => {
-    //   onUnblock(userId)
-    //     .then((result) => toast.success(`${result.blocked.username} unblocked`))
-    //     .catch(() => toast.error("Something went wrong"));
-    // });
+    startTransition(() => {
+      onUnban(userId)
+        .then((result: any) => {
+          toast.success(`${result.user.username} unbanned`);
+          router.refresh();
+        })
+        .catch(() => toast.error("Something went wrong"));
+    });
   };
 
   return (

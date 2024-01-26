@@ -3,10 +3,11 @@
 import { useRef, useState, useEffect } from "react";
 import { useEventListener } from "usehooks-ts";
 
+import { LoadingVideo } from "./loading-video";
 import { FullscreenControl } from "./fullscreen-control";
 import { VolumeControl } from "./volume-control";
 import Hls from "hls.js";
-import { LoadingVideo } from "./loading-video";
+import { cn } from "@/lib/utils";
 
 interface LiveVideoProps {
   username: string;
@@ -76,6 +77,7 @@ export const LiveVideo = ({ username }: LiveVideoProps) => {
       hls.attachMedia(video);
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        console.log("MANIFEST PARSED!");
         setManifestParsed(true);
         video.play().catch((e) => console.error("Error playing video!", e));
       });
@@ -87,7 +89,6 @@ export const LiveVideo = ({ username }: LiveVideoProps) => {
       });
 
       hls.on(Hls.Events.ERROR, (event, data) => {
-        setManifestParsed(false);
         if (data.fatal) {
           if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
           }
@@ -106,20 +107,27 @@ export const LiveVideo = ({ username }: LiveVideoProps) => {
       className="relative h-full flex aspect-video"
       onDoubleClick={toggleFullscreen}
     >
-      <video src={src} width={"100%"} ref={videoRef} />
-      <div className="absolute top-0 h-full w-full opacity-0 hover:opacity-100 hover:transition-all">
-        <div className="absolute bottom-0 flex h-14 w-full items-center justify-between bg-gradient-to-r from-neutral-900 px-4">
-          <VolumeControl
-            onChange={onVolumeChange}
-            value={volume}
-            onToggle={toggleMute}
-          />
-          <FullscreenControl
-            isFullscreen={isFullscreen}
-            onToggle={toggleFullscreen}
-          />
+      {!manifestParsed && <LoadingVideo label="Loading..." />}
+      <video
+        src={src}
+        className={cn("w-full h-full", !manifestParsed && "w-0 h-0 opacity-0")}
+        ref={videoRef}
+      />
+      {manifestParsed && (
+        <div className="absolute top-0 h-full w-full opacity-0 hover:opacity-100 hover:transition-all">
+          <div className="absolute bottom-0 flex h-14 w-full items-center justify-between bg-gradient-to-r from-neutral-900 px-4">
+            <VolumeControl
+              onChange={onVolumeChange}
+              value={volume}
+              onToggle={toggleMute}
+            />
+            <FullscreenControl
+              isFullscreen={isFullscreen}
+              onToggle={toggleFullscreen}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

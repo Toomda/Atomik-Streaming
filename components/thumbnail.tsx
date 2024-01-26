@@ -63,7 +63,7 @@ export const Thumbnail = ({
 
 export const ThumbnailSkeleton = () => {
   return (
-    <div className="group aspect-video relative rounded-xl cursor-pointer">
+    <div className="relative rounded-md cursor-pointer aspect-video">
       <Skeleton className="h-full w-full" />
     </div>
   );

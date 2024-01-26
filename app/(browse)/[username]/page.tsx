@@ -1,7 +1,8 @@
-import { isFollowingUser } from '@/actions/follow';
-import { getUserByUsername } from '@/actions/user';
-import { notFound } from 'next/navigation';
-import { StreamPlayer } from '@/components/stream-player';
+import { isFollowingUser } from "@/actions/follow";
+import { getUserByUsername } from "@/actions/user";
+import { notFound } from "next/navigation";
+import { StreamPlayer } from "@/components/stream-player";
+import { isBannedByUser } from "@/actions/ban";
 
 interface UserPageProps {
   params: {
@@ -17,14 +18,15 @@ const UserPage = async ({ params }: UserPageProps) => {
   }
 
   const isFollowing = await isFollowingUser(user.id);
-  // const isBlocked = await isBlockedByUser(user.id);
-
-  // if (isBlocked) {
-  //   notFound();
-  // }
+  const isBanned = await isBannedByUser(params.username);
 
   return (
-    <StreamPlayer user={user} stream={user.stream} isFollowing={isFollowing} />
+    <StreamPlayer
+      user={user}
+      stream={user.stream}
+      isFollowing={isFollowing}
+      isBanned={isBanned}
+    />
   );
 };
 

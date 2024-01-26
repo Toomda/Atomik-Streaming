@@ -3,6 +3,15 @@ import { ResultCard, ResultCardSkeleton } from "./result-card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Following = async () => {
+  // const fetchData = (): any => {
+  //   return new Promise((resolve) => {
+  //     setTimeout(async () => {
+  //       const streams = await getFollowedStreams();
+  //       resolve(streams);
+  //     }, 2000);
+  //   });
+  // };
+
   const streams = await getFollowedStreams();
 
   return (
@@ -29,8 +38,8 @@ export const Following = async () => {
 export const FollowingSkeleton = () => {
   return (
     <div>
-      <Skeleton className="h-8 w-[290px] mb-4 flex-grow" />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+      <Skeleton className="h-8 w-[150px] mb-4 flex-grow" />
+      <div className="grid grid-cols-6 gap-4">
         {[...Array(3)].map((_, i) => (
           <ResultCardSkeleton key={i} />
         ))}
