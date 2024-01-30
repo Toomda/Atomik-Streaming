@@ -1,17 +1,22 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import { ThemeProvider } from '@/components/theme-provider';
-import { Toaster } from 'sonner';
-import { SessionProvider } from 'next-auth/react';
-import { auth } from '@/next-auth';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "sonner";
+import { SessionProvider } from "next-auth/react";
+import { auth } from "@/next-auth";
+import dynamic from "next/dynamic";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Atomik Streaming',
+  title: "Atomik Streaming",
   description: "Let's Play",
 };
+
+const SocketConnection = dynamic(() => import("./socket-connection"), {
+  ssr: false,
+});
 
 export default async function RootLayout({
   children,
@@ -23,6 +28,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+        <SocketConnection />
         <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"
@@ -33,6 +39,7 @@ export default async function RootLayout({
             {children}
           </ThemeProvider>
         </SessionProvider>
+        {/* </SocketProvider> */}
       </body>
     </html>
   );

@@ -1,9 +1,9 @@
 "use client";
 
 import React, { createContext, useState, useEffect, useRef } from "react";
-import { io, Socket } from "socket.io-client";
 import { getRoomInformation } from "@/actions/room";
 import { isBannedByUser } from "@/actions/ban";
+import useSocketStore from "@/store/use-socket";
 
 interface Participant {
   username?: string;
@@ -17,6 +17,7 @@ interface Room {
   localViewer: Participant;
   isLive: boolean;
   isBanned: boolean;
+  isModerator: boolean;
   messages: ChatMessage[];
   guestViewer: number;
   sendMessage: (message: string) => void;
@@ -50,14 +51,15 @@ export const RoomProvider = ({
   const [guestViewer, setGuestViewer] = useState(0);
   const [isLive, setIsLive] = useState(false);
   const [isBanned, setIsBanned] = useState<boolean>(initialIsBanned);
+  const [isModerator, setIsModerator] = useState<boolean>(false);
   const hostNameRef = useRef(initialHostName);
   const localViewerNameRef = useRef(initialLocalViewerName);
   const localViewerIdentityRef = useRef(initialLocalViewerIdentity);
-  const socketRef = useRef<Socket | null>(null);
+  const { socket } = useSocketStore();
 
   useEffect(() => {
     const disconnectChat = () => {
-      socketRef.current!.emit("disconnectChat", {
+      socket!.emit("disconnectChat", {
         hostName: hostNameRef.current,
         viewerName: localViewerNameRef.current,
       });
@@ -85,7 +87,6 @@ export const RoomProvider = ({
     };
 
     const handleViewerLeft = (viewer: Participant) => {
-      console.log("Handle viewer left");
       if (!viewer.username) {
         setGuestViewer((prev) => prev - 1);
         return;
@@ -102,15 +103,95 @@ export const RoomProvider = ({
     const handleBan = () => {
       setIsBanned(true);
     };
+
     const handleUnban = () => {
       setIsBanned(false);
+    };
+
+    const handleMod = () => {
+      setIsModerator(true);
+      setMessages((prev) => {
+        return [
+          ...prev,
+          {
+            author: "",
+            message: `You are now a Moderator of this stream!`,
+            timestamp: Date.now(),
+          },
+        ];
+      });
+    };
+
+    const handleUnmod = () => {
+      setIsModerator(false);
+      setMessages((prev) => {
+        return [
+          ...prev,
+          {
+            author: "",
+            message: `You are not a Moderator of this stream anymore.`,
+            timestamp: Date.now(),
+          },
+        ];
+      });
+    };
+
+    const handleBanSuccess = (username: string) => {
+      setMessages((prev) => {
+        return [
+          ...prev,
+          {
+            author: "",
+            message: `${username} has been banned!`,
+            timestamp: Date.now(),
+          },
+        ];
+      });
+    };
+
+    const handleUnbanSuccess = (username: string) => {
+      setMessages((prev) => {
+        return [
+          ...prev,
+          {
+            author: "",
+            message: `${username} has been unbanned!`,
+            timestamp: Date.now(),
+          },
+        ];
+      });
+    };
+
+    const handleModSuccess = (username: string) => {
+      console.log("Got mod success!");
+      setMessages((prev) => {
+        return [
+          ...prev,
+          {
+            author: "",
+            message: `${username} is now a Moderator of this stream!`,
+            timestamp: Date.now(),
+          },
+        ];
+      });
+    };
+
+    const handleUnmodSuccess = (username: string) => {
+      setMessages((prev) => {
+        return [
+          ...prev,
+          {
+            author: "",
+            message: `${username} is not a Moderator of this stream anymore!`,
+            timestamp: Date.now(),
+          },
+        ];
+      });
     };
 
     const fetchRoomInfo = async () => {
       const roomInfo = await getRoomInformation(hostNameRef.current);
       const isBanned = await isBannedByUser(hostNameRef.current);
-
-      console.log(isBanned);
 
       setRemoteViewer((prev) => {
         const newViewer = roomInfo.viewer.map((viewer: any) => {
@@ -127,44 +208,54 @@ export const RoomProvider = ({
       setIsBanned(isBanned);
     };
 
-    if (!socketRef.current) {
-      socketRef.current = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}`);
+    if (socket) {
+      socket.on("chat-message", handleChatMessage);
+      socket.on("viewer-joined", handleViewerJoined);
+      socket.on("viewer-left", handleViewerLeft);
+      socket.on("live-status", handleLiveStatus);
+      socket.on("banned", handleBan);
+      socket.on("banned-success", handleBanSuccess);
+      socket.on("unbanned", handleUnban);
+      socket.on("unbanned-success", handleUnbanSuccess);
+      socket.on("mod", handleMod);
+      socket.on("mod-success", handleModSuccess);
+      socket.on("unmod", handleUnmod);
+      socket.on("unmod-success", handleUnmodSuccess);
 
-      socketRef.current.on("chat-message", handleChatMessage);
-      socketRef.current.on("viewer-joined", handleViewerJoined);
-      socketRef.current.on("viewer-left", handleViewerLeft);
-      socketRef.current.on("live-status", handleLiveStatus);
-      socketRef.current.on("banned", handleBan);
-      socketRef.current.on("unbanned", handleUnban);
-
-      window.addEventListener("beforeunload", disconnectChat);
+      socket.emit("room-join", {
+        hostName: hostNameRef.current,
+        viewerName: localViewerNameRef.current,
+        viewerIdentity: localViewerIdentityRef.current,
+      });
     }
 
-    socketRef.current.emit("room-join", {
-      hostName: hostNameRef.current,
-      viewerName: localViewerNameRef.current,
-      viewerIdentity: localViewerIdentityRef.current,
-    });
+    window.addEventListener("beforeunload", disconnectChat);
 
     fetchRoomInfo();
 
     return () => {
-      if (socketRef.current) {
+      if (socket) {
         disconnectChat();
         window.removeEventListener("beforeunload", disconnectChat);
-        socketRef.current.off("chat-message", handleChatMessage);
-        socketRef.current.off("viewer-joined", handleViewerJoined);
-        socketRef.current.off("viewer-left", handleViewerLeft);
-        socketRef.current.off("live-status", handleLiveStatus);
-        socketRef.current.disconnect();
-        socketRef.current = null;
+        socket.off("chat-message", handleChatMessage);
+        socket.off("viewer-joined", handleViewerJoined);
+        socket.off("viewer-left", handleViewerLeft);
+        socket.off("live-status", handleLiveStatus);
+        socket.off("banned", handleBan);
+        socket.off("banned-success", handleBanSuccess);
+        socket.off("unbanned", handleUnban);
+        socket.off("unbanned-success", handleUnbanSuccess);
+        socket.off("mod", handleMod);
+        socket.off("mod-success", handleModSuccess);
+        socket.off("unmod", handleUnmod);
+        socket.off("unmod-success", handleUnmodSuccess);
       }
     };
   }, []);
 
   const sendMessage = (message: string) => {
     console.log(message);
-    socketRef.current!.emit("chat-message", {
+    socket!.emit("chat-message", {
       toChannel: hostNameRef.current,
       message: message,
       author: localViewerNameRef.current,
@@ -185,6 +276,7 @@ export const RoomProvider = ({
         remoteViewer,
         guestViewer,
         isBanned,
+        isModerator,
       }}
     >
       {children}

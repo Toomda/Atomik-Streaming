@@ -34,7 +34,6 @@ export const Chat = ({
 
   const isHidden = !isChatEnabled;
 
-  const user = useAuth();
   const [value, setValue] = useState("");
   const { messages, sendMessage } = useRoom();
 
@@ -49,7 +48,6 @@ export const Chat = ({
   }, [messages]);
 
   const onSubmit = () => {
-    console.log(user);
     sendMessage(value);
     setValue("");
   };
