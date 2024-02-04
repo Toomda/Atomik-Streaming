@@ -39,7 +39,6 @@ export default async function RootLayout({
             {children}
           </ThemeProvider>
         </SessionProvider>
-        {/* </SocketProvider> */}
       </body>
     </html>
   );

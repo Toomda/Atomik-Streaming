@@ -119,7 +119,7 @@ export const getRecommended = async () => {
     });
   } catch (error) {
     console.log(error);
-    throw new Error("Error while getting recommended Users");
+    return [];
   }
 
   return response.data.users;

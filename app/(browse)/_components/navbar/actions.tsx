@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/button";
 import { SignInButton } from "@/components/auth/signin-button";
 import { UserButton } from "@/components/auth/user-button";
 import { currentUser } from "@/lib/auth";
-import { Clapperboard } from "lucide-react";
+import { Clapperboard, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { SignUpButton } from "@/components/auth/signup-button";
+import { DirectMessageButton } from "@/components/direct-message-button";
 
 export const Actions = async () => {
   const user = await currentUser();
@@ -19,6 +20,7 @@ export const Actions = async () => {
       )}
       {!!user && (
         <div className="flex items-center gap-x-4">
+          <DirectMessageButton username={user.username} />
           <Button
             size="sm"
             variant="ghost"

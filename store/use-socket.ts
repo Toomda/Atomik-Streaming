@@ -5,15 +5,20 @@ let socketInstance: Socket | null = null;
 
 interface SocketState {
   socket: Socket | null;
-  connect: (url: string) => void;
+  connect: (url: string, username: string) => void;
   disconnect: () => void;
 }
 
 const useSocketStore = create<SocketState>((set) => ({
   socket: null,
-  connect: (url) => {
+  connect: (url, username) => {
     if (!socketInstance) {
-      socketInstance = io(url, { transports: ["websocket"] });
+      socketInstance = io(url, {
+        transports: ["websocket"],
+        query: {
+          username: username,
+        },
+      });
     }
     set({ socket: socketInstance });
   },

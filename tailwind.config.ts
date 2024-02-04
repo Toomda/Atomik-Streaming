@@ -1,7 +1,5 @@
-import { withUt } from "uploadthing/tw";
-
 /** @type {import('tailwindcss').Config} */
-module.exports = withUt({
+module.exports = {
   darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
@@ -61,7 +59,21 @@ module.exports = withUt({
       aspectRatio: {
         "9/16": "9 / 16",
       },
+      keyframes: {
+        slideInRight: {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+      },
+      slideOutLeft: {
+        "0%": { transform: "translateX(0)" },
+        "100%": { transform: "translateX(-100%)" },
+      },
+      animation: {
+        slideInRight: "slideInRight 0.3s ease-out forwards",
+        slideOutLeft: "slideOutLeft 0.3s ease-out forwards",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
-});
+};
