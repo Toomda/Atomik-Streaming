@@ -10,8 +10,7 @@ import {
 } from "../components/ui/dropdown-menu";
 import { ScrollArea } from "./ui/scroll-area";
 import { UserAvatar } from "./user-avatar";
-import { useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import useSocketStore from "@/store/use-socket";
 import { getDirectMessages } from "@/actions/direct-message";
