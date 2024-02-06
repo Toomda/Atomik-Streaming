@@ -86,9 +86,6 @@ export const updateUser = async (values: Partial<User>) => {
       username: values.username,
     };
 
-    console.log(validData);
-    console.log(values.username);
-
     response = await axios.patch(
       `${process.env.BASE_URL}/user/${self.id}`,
       validData,

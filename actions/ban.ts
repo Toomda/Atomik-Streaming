@@ -72,7 +72,13 @@ export const getBannedUsers = async () => {
 };
 
 export const isBannedByUser = async (username: string) => {
-  const self = await getSelf();
+  let self;
+
+  try {
+    self = await getSelf();
+  } catch (error) {
+    return;
+  }
 
   let response;
 

@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/next-auth";
 import dynamic from "next/dynamic";
+import { DirectMessageProvider } from "@/context/direct-message-context";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,16 +30,18 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <SocketConnection />
-        <SessionProvider session={session}>
-          <ThemeProvider
-            attribute="class"
-            forcedTheme="dark"
-            storageKey="atomik-theme"
-          >
-            <Toaster theme="light" position="bottom-center" />
-            {children}
-          </ThemeProvider>
-        </SessionProvider>
+        <DirectMessageProvider username={session?.user.username}>
+          <SessionProvider session={session}>
+            <ThemeProvider
+              attribute="class"
+              forcedTheme="dark"
+              storageKey="atomik-theme"
+            >
+              <Toaster theme="light" position="bottom-center" />
+              {children}
+            </ThemeProvider>
+          </SessionProvider>
+        </DirectMessageProvider>
       </body>
     </html>
   );
