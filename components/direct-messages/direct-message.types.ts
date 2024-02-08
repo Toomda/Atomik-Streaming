@@ -19,6 +19,6 @@ interface DirectMessageChat {
   chatRead: boolean;
   partnerDetails: {
     username: string;
-    image: string;
+    id: string;
   };
 }

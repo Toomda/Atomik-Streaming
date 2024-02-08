@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { UserAvatar, UserAvatarSkeleton } from '@/components/user-avatar';
-import { VerifiedMark } from '@/components/verified-mark';
-import { UserIcon } from 'lucide-react';
-import { Actions, ActionsSkeleton } from './actions';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useRoom } from '@/context/room-context';
+import { UserAvatar, UserAvatarSkeleton } from "@/components/user-avatar";
+import { VerifiedMark } from "@/components/verified-mark";
+import { UserIcon } from "lucide-react";
+import { Actions, ActionsSkeleton } from "./actions";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useRoom } from "@/context/room-context";
 
 interface HeaderProps {
   hostName: string;
@@ -35,7 +35,7 @@ export const Header = ({
     <div className="flex flex-col lg:flex-row gap-y-4 lg:gap-y-0 items-start justify-between px-4">
       <div className="flex items-center gap-x-3">
         <UserAvatar
-          imageUrl={imageUrl}
+          userId={hostIdentity}
           username={hostName}
           size="lg"
           isLive={isLive}
@@ -51,8 +51,8 @@ export const Header = ({
             <div className="font-semibold flex gap-x-1 items-center text-xs text-rose-500">
               <UserIcon className="h-4 w-4" />
               <p>
-                {participantCount}{' '}
-                {participantCount === 1 ? 'viewer' : 'viewers'}
+                {participantCount}{" "}
+                {participantCount === 1 ? "viewer" : "viewers"}
               </p>
             </div>
           ) : (

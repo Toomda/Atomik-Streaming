@@ -29,6 +29,7 @@ export const Recommended = ({ data }: RecommendedProps) => {
             username={user.username!}
             imageUrl={user.image!}
             isLive={user.stream?.isLive}
+            userId={user.id}
           />
         ))}
       </ul>

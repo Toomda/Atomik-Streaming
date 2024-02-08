@@ -137,3 +137,14 @@ export const getUserById = async (id: string) => {
 
   return response.data.user;
 };
+
+export const getImageByUrlUserId = async (id: string) => {
+  let response;
+  try {
+    response = await axios.get(`${process.env.BASE_URL}/user/image/${id}`);
+  } catch (error) {
+    throw new Error(`Error while getting Image for userId: ${id}`);
+  }
+
+  return response.data;
+};

@@ -19,6 +19,7 @@ const ImageUpload = ({
 }: ImageUploadProps) => {
   const [file, setFile] = useState<File>();
   const [previewUrl, setPreviewUrl] = useState<string>(initialPreview);
+
   const [isValid, setIsValid] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);

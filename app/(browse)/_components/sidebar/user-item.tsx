@@ -15,9 +15,15 @@ interface UserItemProps {
   username: string;
   imageUrl: string;
   isLive?: boolean;
+  userId: string;
 }
 
-export const UserItem = ({ username, imageUrl, isLive }: UserItemProps) => {
+export const UserItem = ({
+  username,
+  imageUrl,
+  isLive,
+  userId,
+}: UserItemProps) => {
   const pathname = usePathname();
 
   const { collapsed } = useSidebar((state) => state);
@@ -42,7 +48,7 @@ export const UserItem = ({ username, imageUrl, isLive }: UserItemProps) => {
             collapsed && "justify-center"
           )}
         >
-          <UserAvatar imageUrl={imageUrl} username={username} isLive={isLive} />
+          <UserAvatar username={username} isLive={isLive} userId={userId} />
           {!collapsed && <p className="truncate">{username}</p>}
           {!collapsed && isLive && <LiveBadge className="ml-auto" />}
         </div>

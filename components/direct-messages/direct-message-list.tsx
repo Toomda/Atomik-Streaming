@@ -41,9 +41,9 @@ export const DirectMessageList = ({
           >
             <div className="flex items-center space-x-3 p-2">
               <UserAvatar
-                imageUrl={chat.partnerDetails.image}
                 username={chat.partnerDetails.username}
                 size={"md"}
+                userId={chat.partnerDetails.id}
               />
               <div className="flex flex-col max-w-xs">
                 <p className="text-md">{chat.partnerDetails.username}</p>

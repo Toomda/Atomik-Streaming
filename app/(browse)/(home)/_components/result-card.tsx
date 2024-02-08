@@ -18,6 +18,7 @@ interface ResultCardProps {
     name: string;
     thumbnail: string | null;
     Category: Category | null;
+    thumbnailExists: boolean;
   };
 }
 
@@ -40,17 +41,18 @@ export const ResultCard = ({ data }: ResultCardProps) => {
           <LiveVideo username={data.user.username} />
         ) : (
           <Thumbnail
-            src={data.thumbnail}
-            fallback={data.user.image!}
+            thumbnailExists={data.thumbnailExists}
+            userId={data.user.id!}
             isLive={data.isLive}
             username={data.user.username!}
+            streamId={data.id}
           />
         )}
       </div>
       <Link href={`/${data.user.username}`} className="flex gap-x-3">
         <UserAvatar
+          userId={data.user.id}
           username={data.user.username!}
-          imageUrl={data.user.image!}
           isLive={data.isLive}
         />
         <div className="flex flex-col text-sm overflow-hidden">

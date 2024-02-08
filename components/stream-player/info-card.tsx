@@ -7,18 +7,20 @@ import { Category } from ".";
 
 interface InfoCardProps {
   name: string;
-  thumbnail: string | null;
   hostIdentity: string;
   viewerIdentity: string;
   category: Category | null;
+  thumbnailExists: boolean;
+  streamId: string;
 }
 
 export const InfoCard = ({
   hostIdentity,
   name,
-  thumbnail,
   viewerIdentity,
   category,
+  thumbnailExists,
+  streamId,
 }: InfoCardProps) => {
   const hostAsViewer = `host-${hostIdentity}`;
   const isHost = viewerIdentity === hostAsViewer;
@@ -42,8 +44,9 @@ export const InfoCard = ({
           </div>
           <InfoModal
             initialName={name}
-            initialThumbnail={thumbnail}
             initialCategory={category}
+            thumbnailExists={thumbnailExists}
+            streamId={streamId}
           />
         </div>
         <Separator />

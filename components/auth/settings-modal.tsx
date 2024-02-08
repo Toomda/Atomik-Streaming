@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Dialog,
@@ -7,55 +7,66 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useState, useTransition, useRef, ElementRef } from 'react';
-import { updateUser } from '@/actions/user';
-import { toast } from 'sonner';
-import { Settings, Trash } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
-import ImageUpload from '../image-upload';
-import { uploadImageByUserId } from '@/lib/upload-service';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useState, useTransition, useRef, ElementRef } from "react";
+import { updateUser } from "@/actions/user";
+import { toast } from "sonner";
+import { Settings } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import ImageUpload from "../image-upload";
+import { uploadImageByUserId } from "@/lib/upload-service";
+import { useCachebust } from "@/store/use-cachebust";
 
 interface SettingsModalProps {
   initialUsername: string;
-  initialImage: string | null;
+  user: {
+    id: string;
+    imageExists: boolean;
+  };
 }
 
 export const SettingsModal = ({
   initialUsername,
-  initialImage,
+  user,
 }: SettingsModalProps) => {
-  const [username, setUsername] = useState(initialUsername || '');
+  const [username, setUsername] = useState(initialUsername || "");
   const [image, setImage] = useState<File | null>();
   const [isPending, startTransition] = useTransition();
+  const { userCacheBust, setUserCacheBust } = useCachebust();
   const router = useRouter();
-  const closeRef = useRef<ElementRef<'button'>>(null);
+  const closeRef = useRef<ElementRef<"button">>(null);
   const pathname = usePathname();
+
+  const initialPreview = user.imageExists
+    ? `${process.env.NEXT_PUBLIC_AWS_BASE_IMAGE_URL}/UserProfiles/${user.id}?${userCacheBust}`
+    : "";
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!username) {
-      toast.error('Username can not be empty');
+      toast.error("Username can not be empty");
       return;
     }
 
     startTransition(() => {
-      updateUser({ username: username })
-        .then((user) => {
-          if (image) {
-            uploadImageByUserId(image, user.id);
-          }
-          if (pathname.includes(initialUsername)) {
-            router.push(pathname.replace(initialUsername, username));
-          }
-          router.refresh();
-          toast.success('User successfully updated');
-          closeRef?.current?.click();
-        })
-        .catch((err) => toast.error(err.message));
+      if (image) {
+        uploadImageByUserId(image, user.id).then(() => {
+          updateUser({ username: username })
+            .then(() => {
+              if (pathname.includes(initialUsername)) {
+                router.push(pathname.replace(initialUsername, username));
+              }
+              router.refresh();
+              setUserCacheBust();
+              toast.success("User successfully updated");
+              closeRef?.current?.click();
+            })
+            .catch((err) => toast.error(err.message));
+        });
+      }
     });
   };
 
@@ -83,7 +94,7 @@ export const SettingsModal = ({
             disabled={isPending}
           />
           <ImageUpload
-            initialPreview={initialImage || ''}
+            initialPreview={initialPreview}
             center
             id="image"
             onInput={inputHandler}
