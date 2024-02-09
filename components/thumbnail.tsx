@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { UserAvatar } from "./user-avatar";
 import { Skeleton } from "@/components/ui/skeleton";
