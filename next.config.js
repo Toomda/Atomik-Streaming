@@ -1,11 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: [
-      "localhost:5000",
-      "localhost",
-      "atomik-streaming.tv",
-      "atomik-storage.s3.eu-central-1.amazonaws.com",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "atomik-storage.s3.eu-central-1.amazonaws.com",
+        port: "",
+        pathname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.pixabay.com",
+      },
     ],
   },
 };

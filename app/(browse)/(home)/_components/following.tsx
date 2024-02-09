@@ -3,15 +3,6 @@ import { ResultCard, ResultCardSkeleton } from "./result-card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Following = async () => {
-  // const fetchData = (): any => {
-  //   return new Promise((resolve) => {
-  //     setTimeout(async () => {
-  //       const streams = await getFollowedStreams();
-  //       resolve(streams);
-  //     }, 2000);
-  //   });
-  // };
-
   const streams = await getFollowedStreams();
 
   return (

@@ -12,6 +12,7 @@ interface HintProps {
   side?: "top" | "bottom" | "left" | "right";
   align?: "start" | "center" | "end";
   hide?: boolean;
+  delayDuration?: number;
 }
 
 export const Hint = ({
@@ -21,6 +22,7 @@ export const Hint = ({
   side,
   align,
   hide,
+  delayDuration,
 }: HintProps) => {
   if (hide) {
     return <div>{children}</div>;
@@ -28,7 +30,7 @@ export const Hint = ({
 
   return (
     <TooltipProvider>
-      <Tooltip delayDuration={0}>
+      <Tooltip delayDuration={delayDuration ?? 0}>
         <TooltipTrigger asChild={asChild}>{children}</TooltipTrigger>
         <TooltipContent
           className="text-black bg-white"

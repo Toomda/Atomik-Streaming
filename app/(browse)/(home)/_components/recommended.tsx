@@ -18,7 +18,7 @@ export const Recommended = async () => {
   );
 };
 
-export const RecommndedSkeleton = () => {
+export const RecommendedSkeleton = () => {
   return (
     <div>
       <div className="grid grid-cols-3 gap-4 max-h-96">

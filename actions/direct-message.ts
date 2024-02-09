@@ -21,6 +21,7 @@ export const getDirectMessages = async () => {
       },
     });
   } catch (error) {
+    console.log(error);
     throw new Error("Error while trying to retrieve DM's");
   }
 

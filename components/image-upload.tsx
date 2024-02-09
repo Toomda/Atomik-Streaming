@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Hint } from "./hint";
 import { Button } from "./ui/button";
 import { Trash } from "lucide-react";
+import { LoadingVideo } from "./stream-player/loading-video";
 
 interface ImageUploadProps {
   onInput: (file: File | null) => void;
@@ -19,6 +20,7 @@ const ImageUpload = ({
 }: ImageUploadProps) => {
   const [file, setFile] = useState<File>();
   const [previewUrl, setPreviewUrl] = useState<string>(initialPreview);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const [isValid, setIsValid] = useState(false);
 
@@ -61,6 +63,10 @@ const ImageUpload = ({
     onInput(null);
   };
 
+  const onImageLoaded = () => {
+    setImageLoaded(true);
+  };
+
   return (
     <div className="form-control">
       <input
@@ -86,16 +92,20 @@ const ImageUpload = ({
               </Hint>
             </div>
             {previewUrl && (
-              <Image
-                src={
-                  previewUrl.startsWith("uploads")
-                    ? `${process.env.NEXT_PUBLIC_RESOURCE_URL}/${previewUrl}`
-                    : previewUrl
-                }
-                alt="Image"
-                fill
-                className="object-cover"
-              />
+              <>
+                {!imageLoaded && <LoadingVideo label="Loading..." />}
+                <Image
+                  src={
+                    previewUrl.startsWith("uploads")
+                      ? `${process.env.NEXT_PUBLIC_RESOURCE_URL}/${previewUrl}`
+                      : previewUrl
+                  }
+                  alt="Image"
+                  fill
+                  className="object-cover"
+                  onLoad={onImageLoaded}
+                />
+              </>
             )}
           </div>
         </div>

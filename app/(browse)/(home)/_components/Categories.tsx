@@ -5,13 +5,19 @@ export const Categories = async () => {
   const categories = await getCategories();
 
   return (
-    <div className="mx-auto max-w-screen-xl px-6">
-      <div className="grid grid-cols-6 overflow-hidden gap-0">
-        {categories.map((category: any) => {
-          return <CategoryItem category={category} key={category.id} />;
-        })}
+    <>
+      <p className="pb-2 font-bold" style={{ fontSize: "x-large" }}>
+        Categories
+      </p>
+
+      <div className="mx-auto max-w-screen-xl px-6">
+        <div className="grid grid-cols-6 overflow-hidden gap-0">
+          {categories.map((category: any) => {
+            return <CategoryItem category={category} key={category.id} />;
+          })}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

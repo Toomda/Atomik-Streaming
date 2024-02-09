@@ -3,6 +3,7 @@ import { UserAvatar } from "./user-avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LiveBadge } from "./live-badge";
 import { useCachebust } from "@/store/use-cachebust";
+import { useEffect, useState } from "react";
 
 interface ThumbnailProps {
   thumbnailExists: boolean;
@@ -21,6 +22,15 @@ export const Thumbnail = ({
 }: ThumbnailProps) => {
   let content;
   const { streamCacheBust } = useCachebust();
+  const [imageSrc, setImageSrc] = useState(
+    `${process.env.NEXT_PUBLIC_AWS_BASE_IMAGE_URL}/StreamThumbnails/${streamId}`
+  );
+
+  useEffect(() => {
+    setImageSrc(
+      `${process.env.NEXT_PUBLIC_AWS_BASE_IMAGE_URL}/StreamThumbnails/${streamId}?${streamCacheBust}`
+    );
+  }, [streamCacheBust, streamId]);
 
   if (!thumbnailExists) {
     content = (
@@ -36,13 +46,15 @@ export const Thumbnail = ({
     );
   } else {
     content = (
-      <Image
-        src={`${process.env.NEXT_PUBLIC_AWS_BASE_IMAGE_URL}/StreamThumbnails/${streamId}?${streamCacheBust}`}
-        fill
-        alt="Thumbnail"
-        sizes="h-full w-full"
-        className="object-cover transition-transform group-hover:translate-x-2 group-hover:-translate-y-2 rounded-md"
-      />
+      <>
+        <Image
+          src={imageSrc}
+          fill
+          alt="Thumbnail"
+          sizes="h-full w-full"
+          className="object-cover transition-transform group-hover:translate-x-2 group-hover:-translate-y-2 rounded-md"
+        />
+      </>
     );
   }
 

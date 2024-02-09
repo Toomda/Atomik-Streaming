@@ -16,7 +16,6 @@ interface ResultCardProps {
     user: User;
     isLive: boolean;
     name: string;
-    thumbnail: string | null;
     Category: Category | null;
     thumbnailExists: boolean;
   };

@@ -2,7 +2,13 @@
 
 import { currentUser, useAuth, useUser } from "@/lib/auth";
 import { usePathname } from "next/navigation";
-import { Fullscreen, KeyRound, MessageSquare, Users } from "lucide-react";
+import {
+  Fullscreen,
+  KeyRound,
+  MessageSquare,
+  Users,
+  Video,
+} from "lucide-react";
 import { NavItem, NavItemSkeleton } from "./navitem";
 
 export const Navigation = () => {
@@ -29,6 +35,11 @@ export const Navigation = () => {
       label: "Community",
       href: `/u/${user?.username}/community`,
       icon: Users,
+    },
+    {
+      label: "Videos",
+      href: `/u/${user?.username}/video`,
+      icon: Video,
     },
   ];
 
