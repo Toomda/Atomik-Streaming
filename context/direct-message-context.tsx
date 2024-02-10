@@ -19,11 +19,13 @@ const DirectMessageContext = createContext<DirectMessageContext | undefined>(
 interface DirectMessageProviderProps {
   children: React.ReactNode;
   username: string | undefined;
+  initialMessages: any[];
 }
 
 export const DirectMessageProvider = ({
   children,
   username,
+  initialMessages,
 }: DirectMessageProviderProps) => {
   const { socket } = useSocketStore();
   const [directMessageChats, setDirectMessageChats] = useState<
@@ -39,27 +41,23 @@ export const DirectMessageProvider = ({
   }, [selectedChat]);
 
   useEffect(() => {
-    const fetchDirectMessages = async () => {
-      const fetchedMessages = await getDirectMessages();
-      let messages: DirectMessageChat[] = [];
-      for (const partnerId in fetchedMessages) {
-        if (fetchedMessages.hasOwnProperty(partnerId)) {
-          messages.push({
-            partnerId: partnerId,
-            partnerDetails: fetchedMessages[partnerId].partnerDetails,
-            messages: fetchedMessages[partnerId].messages.reverse(),
-            chatRead: !fetchedMessages[partnerId].messages.some(
-              (msg: DirectMessage) =>
-                !msg.messageRead &&
-                msg.sendTo.username.toLowerCase() === username?.toLowerCase()
-            ),
-          });
-        }
+    let messages: DirectMessageChat[] = [];
+    for (const partnerId in initialMessages) {
+      if (initialMessages.hasOwnProperty(partnerId)) {
+        messages.push({
+          partnerId: partnerId,
+          partnerDetails: initialMessages[partnerId].partnerDetails,
+          messages: initialMessages[partnerId].messages.reverse(),
+          chatRead: !initialMessages[partnerId].messages.some(
+            (msg: DirectMessage) =>
+              !msg.messageRead &&
+              msg.sendTo.username.toLowerCase() === username?.toLowerCase()
+          ),
+        });
       }
+    }
 
-      setDirectMessageChats(messages);
-    };
-    fetchDirectMessages();
+    setDirectMessageChats(messages);
   }, []);
 
   useEffect(() => {

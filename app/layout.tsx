@@ -7,6 +7,7 @@ import { SessionProvider } from "next-auth/react";
 import { auth } from "@/next-auth";
 import dynamic from "next/dynamic";
 import { DirectMessageProvider } from "@/context/direct-message-context";
+import { getDirectMessages } from "@/actions/direct-message";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,12 +26,16 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
+  const initialDirectMessages = await getDirectMessages();
 
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <SocketConnection />
-        <DirectMessageProvider username={session?.user.username}>
+        <SocketConnection username={session?.user.username} />
+        <DirectMessageProvider
+          username={session?.user.username}
+          initialMessages={initialDirectMessages}
+        >
           <SessionProvider session={session}>
             <ThemeProvider
               attribute="class"

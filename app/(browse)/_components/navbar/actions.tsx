@@ -27,7 +27,7 @@ export const Actions = async () => {
             className="text-muted-foreground hover:text-primary"
             asChild
           >
-            <Link href={`/u/${user.username}`} prefetch>
+            <Link href={`/u/${user.username}`}>
               <Clapperboard className="h-5 w-5 lg:mr-2" />
               <span className="hidden lg:block">Dashboard</span>
             </Link>
