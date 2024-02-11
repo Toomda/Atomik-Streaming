@@ -55,6 +55,7 @@ export const Thumbnail = ({
           alt="Thumbnail"
           sizes="h-full w-full"
           className="object-cover transition-transform group-hover:translate-x-2 group-hover:-translate-y-2 rounded-md"
+          priority
         />
       </>
     );

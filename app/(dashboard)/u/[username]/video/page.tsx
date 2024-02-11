@@ -5,97 +5,31 @@ import { Separator } from "@/components/ui/separator";
 import { Calendar, Clock, Play } from "lucide-react";
 import Image from "next/image";
 
+interface VOD {
+  videoUrl: string;
+  imageUrl: string;
+  gamesPlayed: {
+    id: string;
+    thumbnailExists: boolean;
+  }[];
+  clips: {
+    id: string;
+  }[];
+  id: string;
+  name: string;
+  startDate: Date;
+  endDate: Date;
+  length: number;
+  createdAt: Date;
+  updatedAt: Date;
+  streamId: string;
+}
+
 const VodPage = async () => {
-  //   const vods = await getVODs();
-  const vods = [
-    {
-      id: 123,
-      thumbnail:
-        "https://cdn.pixabay.com/photo/2023/10/17/09/37/honey-bee-8320764_1280.jpg",
-      timestamp: Date.now(),
-      name: "Das ist ein sehr langer Titel für meinen Stream, was hab ich nur getan! Und was passiert, wenn ich den noch länger mache",
-      length: 120340,
-      gamesPlayed: [
-        {
-          id: "2fa6b754-0bc2-4398-a59a-fc8fda695bcf",
-        },
-        {
-          id: "375f774c-9508-47b5-a8e9-1088e41a7b33",
-        },
-        {
-          id: "3b3b50eb-8c54-4c4b-a131-2d3b6e2e1f67",
-        },
-        {
-          id: "8ee49520-1869-407d-8d4a-0e6bf6fcd6a0",
-        },
-      ],
-    },
-    {
-      id: 1234,
-      thumbnail:
-        "https://cdn.pixabay.com/photo/2023/11/09/11/50/cat-8377169_960_720.jpg",
-      timestamp: Date.now(),
-      name: "Crazy VOD",
-      length: 200,
-      gamesPlayed: [
-        {
-          id: "375f774c-9508-47b5-a8e9-1088e41a7b33",
-        },
-      ],
-    },
-    {
-      id: 1235,
-      thumbnail:
-        "https://cdn.pixabay.com/photo/2023/09/01/23/33/motorcycles-8227939_1280.jpg",
-      timestamp: Date.now(),
-      name: "Crazy VOD",
-      length: 200,
-      gamesPlayed: [
-        {
-          id: "3b3b50eb-8c54-4c4b-a131-2d3b6e2e1f67",
-        },
-      ],
-    },
-    {
-      id: 12356,
-      thumbnail:
-        "https://cdn.pixabay.com/photo/2023/09/01/23/33/motorcycles-8227939_1280.jpg",
-      timestamp: Date.now(),
-      name: "Crazy VOD",
-      length: 200,
-      gamesPlayed: [
-        {
-          id: "8ee49520-1869-407d-8d4a-0e6bf6fcd6a0",
-        },
-      ],
-    },
-    {
-      id: 12357,
-      thumbnail:
-        "https://cdn.pixabay.com/photo/2023/09/01/23/33/motorcycles-8227939_1280.jpg",
-      timestamp: Date.now(),
-      name: "Crazy VOD",
-      length: 200,
-      gamesPlayed: [
-        {
-          id: "992b0c26-6055-4a9f-aa86-397f18849351",
-        },
-      ],
-    },
-    {
-      id: 12358,
-      thumbnail:
-        "https://cdn.pixabay.com/photo/2023/09/01/23/33/motorcycles-8227939_1280.jpg",
-      timestamp: Date.now(),
-      name: "Crazy VOD",
-      length: 200,
-      gamesPlayed: [
-        {
-          id: "c10a9321-7985-4399-a384-c2dc35296f5b",
-        },
-      ],
-    },
-  ];
+  const vods: VOD[] = await getVODs();
+  if (vods.length === 0) {
+    return null;
+  }
 
   const formatSecondsToHHMMSS = (totalSeconds: number): string => {
     const hours = Math.floor(totalSeconds / 3600);
@@ -112,14 +46,14 @@ const VodPage = async () => {
 
   return (
     <div className="flex flex-col p-10 space-y-6">
-      {vods.map((vod) => {
+      {vods.map((vod: VOD) => {
         return (
           <>
             <div key={vod.id} className="w-full flex space-x-6">
               <div className="relative aspect-video w-72">
                 <Image
-                  src={vod.thumbnail}
-                  alt={vod.timestamp.toString()}
+                  src={vod.imageUrl}
+                  alt={vod.name}
                   fill
                   sizes="w-full h-full"
                   className="object-cover rounded-md"
@@ -138,7 +72,7 @@ const VodPage = async () => {
                 <div className="flex flex-grow">
                   <div className="flex flex-col justify-between">
                     <div className="flex space-x-4 pt-1">
-                      {vod.gamesPlayed.map((game) => {
+                      {vod.gamesPlayed?.map((game) => {
                         return (
                           <div
                             key={game.id}
@@ -160,7 +94,7 @@ const VodPage = async () => {
                         <div className="flex space-x-1">
                           <Calendar className="w-4 h-4 self-center" />
                           <p className="text-xl">
-                            {new Date(vod.timestamp).toLocaleDateString()}
+                            {new Date(vod.createdAt).toLocaleDateString()}
                           </p>
                         </div>
                         <div className="flex space-x-1">
@@ -181,9 +115,14 @@ const VodPage = async () => {
                         <Play className="w-4 h-4" />
                         Play
                       </Button>
-                      <Button variant="outline" className="w-20 flex space-x-4">
-                        Downlad
-                      </Button>
+                      <a href={vod.videoUrl} download={vod.name}>
+                        <Button
+                          variant="outline"
+                          className="w-20 flex space-x-4"
+                        >
+                          Download
+                        </Button>
+                      </a>
                     </div>
                   </div>
                 </div>

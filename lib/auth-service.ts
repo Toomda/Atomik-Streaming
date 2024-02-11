@@ -21,7 +21,7 @@ export const getSelf = async () => {
     jwt.verify(self.accessToken, "duuxiZ49FqHVL29YEe8Uceu89");
   } catch (error) {
     if (error instanceof TokenExpiredError) {
-      redirect(`${process.env.LOCAL_BASE_URL}/api/auth/logout`);
+      redirect(`${window.location.origin}/api/auth/logout`);
     }
   }
 

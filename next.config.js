@@ -5,6 +5,7 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "atomik-storage.s3.eu-central-1.amazonaws.com",
+        // hostname: "d3e4lv2sngpnw7.cloudfront.net",
         port: "",
         pathname: "**",
       },
