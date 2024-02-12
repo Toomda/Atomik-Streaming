@@ -16,8 +16,8 @@ type CustomStream = {
   isChatEnabled: boolean;
   isChatDelayed: boolean;
   isChatFollowersOnly: boolean;
+  thumbnailExists: boolean;
   isLive: boolean;
-  thumbnail: string | null;
   name: string;
   Category: Category;
 };
@@ -89,8 +89,9 @@ export const StreamPlayer = ({
             hostIdentity={user.id}
             viewerIdentity={identity}
             name={stream.name}
-            thumbnail={stream.thumbnail}
+            thumbnailExists={stream.thumbnailExists}
             category={stream.Category}
+            streamId={stream.id}
           />
           <AboutCard
             hostName={user.username!}

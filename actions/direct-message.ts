@@ -9,7 +9,7 @@ export const getDirectMessages = async () => {
   try {
     self = await getSelf();
   } catch (error) {
-    return;
+    return [];
   }
 
   let response;

@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import authConfig from "./next-auth.config";
-import axios from "axios";
 
 export const {
   handlers: { GET, POST },
@@ -23,11 +22,8 @@ export const {
           },
         };
       }
-      const response = await axios.get(
-        `${process.env.BASE_URL}/user/${token.sub}`
-      );
 
-      if (response.status !== 200 || !response.data.user) {
+      if (!token.username) {
         return {
           ...session,
           user: {
@@ -39,8 +35,8 @@ export const {
         return {
           ...session,
           user: {
-            username: response.data.user.username as string,
-            id: token.sub as string,
+            username: token.username as string,
+            id: token.id as string,
             accessToken: token.accessToken,
           },
         };

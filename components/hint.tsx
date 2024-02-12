@@ -3,15 +3,16 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from "@/components/ui/tooltip";
 
 interface HintProps {
   label: string;
   children: React.ReactNode;
   asChild?: boolean;
-  side?: 'top' | 'bottom' | 'left' | 'right';
-  align?: 'start' | 'center' | 'end';
+  side?: "top" | "bottom" | "left" | "right";
+  align?: "start" | "center" | "end";
   hide?: boolean;
+  delayDuration?: number;
 }
 
 export const Hint = ({
@@ -21,6 +22,7 @@ export const Hint = ({
   side,
   align,
   hide,
+  delayDuration,
 }: HintProps) => {
   if (hide) {
     return <div>{children}</div>;
@@ -28,7 +30,7 @@ export const Hint = ({
 
   return (
     <TooltipProvider>
-      <Tooltip delayDuration={0}>
+      <Tooltip delayDuration={delayDuration ?? 0}>
         <TooltipTrigger asChild={asChild}>{children}</TooltipTrigger>
         <TooltipContent
           className="text-black bg-white"

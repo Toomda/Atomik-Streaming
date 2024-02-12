@@ -5,7 +5,7 @@ import { currentUser } from "@/lib/auth";
 import { Clapperboard, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { SignUpButton } from "@/components/auth/signup-button";
-import { DirectMessageButton } from "@/components/direct-message-button";
+import { DirectMessageButton } from "@/components/direct-messages/direct-message-button";
 
 export const Actions = async () => {
   const user = await currentUser();

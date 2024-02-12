@@ -1,10 +1,10 @@
-import { Thumbnail, ThumbnailSkeleton } from '@/components/thumbnail';
-import { VerifiedMark } from '@/components/verified-mark';
-import { User } from '@prisma/client';
-import { formatDistanceToNow } from 'date-fns';
+import { Thumbnail, ThumbnailSkeleton } from "@/components/thumbnail";
+import { VerifiedMark } from "@/components/verified-mark";
+import { User } from "@prisma/client";
+import { formatDistanceToNow } from "date-fns";
 
-import { Skeleton } from '@/components/ui/skeleton';
-import Link from 'next/link';
+import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 interface ResultCardProps {
   data: {
@@ -14,6 +14,7 @@ interface ResultCardProps {
     thumbnail: string | null;
     updatedAt: Date;
     user: User;
+    thumbnailExists: boolean;
   };
 }
 
@@ -23,10 +24,11 @@ export const ResultCard = ({ data }: ResultCardProps) => {
       <div className="w-full flex gap-x-4">
         <div className="relative h-[9rem] w-[16rem]">
           <Thumbnail
-            src={data.thumbnail}
-            fallback={data.user.image!}
+            streamId={data.id}
+            userId={data.user.id!}
             isLive={data.isLive}
             username={data.user.username!}
+            thumbnailExists={data.thumbnailExists}
           />
         </div>
         <div className="space-y-1">

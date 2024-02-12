@@ -10,11 +10,6 @@ export const uploadImageByUserId = async (file: File, userId: string) => {
     const formData = new FormData();
     formData.append("image", file);
 
-    console.log(`${process.env.BASE_URL}/user/files/upload/${userId}`);
-    console.log(userId);
-    console.log(file.type);
-    console.log(file.name);
-
     response = await axios.post(
       `${process.env.NEXT_PUBLIC_RESOURCE_URL}/user/files/upload/${userId}`,
       formData,

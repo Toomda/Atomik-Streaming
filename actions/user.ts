@@ -86,9 +86,6 @@ export const updateUser = async (values: Partial<User>) => {
       username: values.username,
     };
 
-    console.log(validData);
-    console.log(values.username);
-
     response = await axios.patch(
       `${process.env.BASE_URL}/user/${self.id}`,
       validData,
@@ -139,4 +136,15 @@ export const getUserById = async (id: string) => {
   }
 
   return response.data.user;
+};
+
+export const getImageByUrlUserId = async (id: string) => {
+  let response;
+  try {
+    response = await axios.get(`${process.env.BASE_URL}/user/image/${id}`);
+  } catch (error) {
+    throw new Error(`Error while getting Image for userId: ${id}`);
+  }
+
+  return response.data;
 };

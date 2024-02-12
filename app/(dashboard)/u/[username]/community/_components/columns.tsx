@@ -35,7 +35,7 @@ export const columns: ColumnDef<BlockedUser>[] = [
       <div className="flex items-center gap-x-4">
         <UserAvatar
           username={row.original.username!}
-          imageUrl={row.original.imageUrl!}
+          userId={row.original.id}
         />
         <span>{row.original.username}</span>
       </div>

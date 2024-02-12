@@ -1,9 +1,12 @@
+"use client";
+
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 import { Skeleton } from "./ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LiveBadge } from "./live-badge";
+import { useCachebust } from "@/store/use-cachebust";
 
 const avatarSizes = cva("", {
   variants: {
@@ -20,19 +23,20 @@ const avatarSizes = cva("", {
 
 interface UserAvatarProps extends VariantProps<typeof avatarSizes> {
   username: string;
-  imageUrl: string;
   isLive?: boolean;
   showBadge?: boolean;
+  userId: string;
 }
 
 export const UserAvatar = ({
   username,
-  imageUrl,
   isLive,
   showBadge,
   size,
+  userId,
 }: UserAvatarProps) => {
   const canShowBadge = showBadge && isLive;
+  const { userCacheBust } = useCachebust();
 
   return (
     <div className="relative">
@@ -43,7 +47,7 @@ export const UserAvatar = ({
         )}
       >
         <AvatarImage
-          src={`${process.env.NEXT_PUBLIC_RESOURCE_URL}/${imageUrl}`}
+          src={`${process.env.NEXT_PUBLIC_AWS_BASE_IMAGE_URL}/UserProfiles/${userId}?${userCacheBust}`}
           className="object-cover"
         />
         <AvatarFallback>

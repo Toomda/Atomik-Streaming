@@ -2,34 +2,25 @@
 
 import { useEffect } from "react";
 import useSocketStore from "@/store/use-socket"; // Update the import path as necessary
-import { getSelf } from "@/lib/auth-service";
 
-const SocketConnection = () => {
+interface SocketConnectionProps {
+  username: string | undefined;
+}
+
+const SocketConnection = ({ username }: SocketConnectionProps) => {
   const { connect, disconnect, socket } = useSocketStore();
 
   useEffect(() => {
-    const getUsernameByToken = async () => {
-      let self;
-
-      try {
-        self = await getSelf();
-      } catch (error) {
-        return;
-      }
-
-      if (!socket && self && self.username) {
-        connect(`http://localhost:5000/`, self.username);
-      }
-    };
-
-    getUsernameByToken();
+    if (!socket && username) {
+      connect(`http://localhost:5000/`, username);
+    }
 
     return () => {
       if (socket) {
         disconnect();
       }
     };
-  }, [socket, connect, disconnect]);
+  }, [socket, connect, disconnect, username]);
 
   return null;
 };

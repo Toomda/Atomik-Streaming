@@ -17,33 +17,37 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { updateStream } from "@/actions/stream";
 import { toast } from "sonner";
-// import { UploadDropzone } from '@/lib/upload-service';
-import { Hint } from "@/components/hint";
-import { Trash } from "lucide-react";
-import Image from "next/image";
 import ImageUpload from "../image-upload";
 import { uploadThumbnailByStreamId } from "@/lib/upload-service";
 import { CategorySearch } from "./category-search";
 import { Category } from ".";
+import { useCachebust } from "@/store/use-cachebust";
 
 interface InfoModalProps {
   initialName: string;
-  initialThumbnail: string | null;
   initialCategory: Category | null;
+  thumbnailExists: boolean;
+  streamId: string;
 }
 
 export const InfoModal = ({
   initialName,
-  initialThumbnail,
   initialCategory,
+  thumbnailExists,
+  streamId,
 }: InfoModalProps) => {
   const [name, setName] = useState(initialName);
   const [file, setFile] = useState<File | null>();
   const [category, setCategory] = useState<any>(null);
-
   const [isPending, startTransition] = useTransition();
+
+  const { streamCacheBust, setStreamCacheBust } = useCachebust();
   const closeRef = useRef<ElementRef<"button">>(null);
   const router = useRouter();
+
+  const initialThumbnail = thumbnailExists
+    ? `${process.env.NEXT_PUBLIC_AWS_BASE_IMAGE_URL}/StreamThumbnails/${streamId}?${streamCacheBust}`
+    : "";
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,6 +55,7 @@ export const InfoModal = ({
       updateStream({ name: name, categoryId: category ? category.id : null })
         .then((stream) => {
           if (file) uploadThumbnailByStreamId(file, stream.id);
+          setStreamCacheBust();
           toast.success("Stream updated successfully");
           closeRef?.current?.click();
           router.refresh();
