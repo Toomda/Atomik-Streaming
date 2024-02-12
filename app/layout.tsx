@@ -26,16 +26,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-  const initialDirectMessages = await getDirectMessages();
 
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <SocketConnection username={session?.user.username} />
-        <DirectMessageProvider
-          username={session?.user.username}
-          initialMessages={initialDirectMessages}
-        >
+        <DirectMessageProvider username={session?.user.username}>
           <SessionProvider session={session}>
             <ThemeProvider
               attribute="class"
