@@ -9,11 +9,8 @@ const nextConfig = {
         port: "",
         pathname: "**",
       },
-      {
-        protocol: "https",
-        hostname: "cdn.pixabay.com",
-      },
     ],
+    minimumCacheTTL: 31536000,
   },
 };
 
