@@ -101,6 +101,13 @@ export const DirectMessageProvider = ({
                 ? true
                 : false;
 
+            if (chatRead && socket) {
+              socket.emit("direct-message-chat-opened", {
+                username: username,
+                partnerName: chat?.partnerDetails.username,
+              });
+            }
+
             return {
               ...chat,
               chatRead: chatRead,
