@@ -12,7 +12,7 @@ const SocketConnection = ({ username }: SocketConnectionProps) => {
 
   useEffect(() => {
     if (!socket && username) {
-      connect(`http://localhost:5000/`, username);
+      connect(process.env.NEXT_PUBLIC_SOCKET_URL!, username);
     }
 
     return () => {
